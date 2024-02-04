@@ -1,39 +1,27 @@
-// Import necessary modules
 const mongoose = require("mongoose");
-require("dotenv").config();
 
-// Get the MongoDB connection string from environment variables
-const mongoURI = process.env.MONGODB_URI;
+const MONGODB_URL = process.env.MONGODB_URL;
 
-// Connect to MongoDB using Mongoose
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-});
+async function connectToDatabase() {
+  try {
+    await mongoose.connect(MONGODB_URL, {
+      useNewUrlParser: true, // Use the new URL parser
+      useUnifiedTopology: true, // Use the new Server Discovery and Monitoring engine
+      serverSelectionTimeoutMS: 5000,
+      // Add any additional options as needed
+    });
 
-// Event handlers for the Mongoose connection
-const db = mongoose.connection;
+    mongoose.connection.on("connected", () => {
+      console.log("Database connected!");
+    });
 
-// On successful connection
-db.on("connected", () => {
-  console.log(`Connected to MongoDB at ${mongoURI}`);
-});
+    mongoose.connection.on("error", (err) => {
+      console.error("Error connecting to database:", err);
+    });
+  } catch (error) {
+    console.error("Error connecting to database:", error.message);
+  }
+}
 
-// On connection error
-db.on("error", (err) => {
-  console.error(`MongoDB connection error: ${err}`);
-});
-
-// On disconnection
-db.on("disconnected", () => {
-  console.log("Disconnected from MongoDB");
-});
-
-// Close the Mongoose connection when the Node process terminates
-process.on("SIGINT", () => {
-  db.close(() => {
-    console.log("Mongoose connection disconnected through app termination");
-    process.exit(0);
-  });
-});
+// Export the connectToDatabase function
+module.exports = connectToDatabase;
