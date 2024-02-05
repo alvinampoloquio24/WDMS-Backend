@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jsonWebToken = require("jsonwebtoken");
 
 async function createUser(userData) {
   try {
@@ -66,6 +67,19 @@ async function findByEmail(email) {
     throw error;
   }
 }
+async function generatAuthToken(user) {
+  try {
+    const token = jsonWebToken.sign(
+      { _id: user._id.toString() },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.TOKEN_EXPIRE }
+    );
+    return token;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 const UserService = {
   getAllUser,
   createUser,
@@ -74,5 +88,6 @@ const UserService = {
   findById,
   login,
   findByEmail,
+  generatAuthToken,
 };
 module.exports = UserService;

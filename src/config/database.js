@@ -1,13 +1,11 @@
 const mongoose = require("mongoose");
 
 const MONGODB_URL = process.env.MONGODB_URL;
-console.log(MONGODB_URL);
 
 async function connectToDatabase() {
   try {
     await mongoose.connect(MONGODB_URL, {
-      useNewUrlParser: true, // Use the new URL parser
-      useUnifiedTopology: true, // Use the new Server Discovery and Monitoring engine
+      // Remove useNewUrlParser and useUnifiedTopology, as they are deprecated
       serverSelectionTimeoutMS: 5000,
       // Add any additional options as needed
     });
@@ -17,10 +15,10 @@ async function connectToDatabase() {
     });
 
     mongoose.connection.on("error", (err) => {
-      console.error("Error connecting to database:", err);
+      console.error("Error connecting to the database:", err);
     });
   } catch (error) {
-    console.error("Error connecting to database:", error.message);
+    console.error("Error connecting to the database:", error.message);
   }
 }
 

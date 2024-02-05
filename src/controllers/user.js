@@ -53,7 +53,9 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "Wrong password. " });
     }
-    return res.status(200).json(user);
+    const token = await UserService.generatAuthToken(user);
+
+    return res.status(200).json({ user, token });
   } catch (error) {
     return res.status(500).send(error);
   }
