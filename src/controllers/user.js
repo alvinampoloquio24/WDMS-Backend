@@ -1,4 +1,5 @@
 const UserService = require("../services/user");
+const bcrypt = require("bcrypt");
 
 const createUser = async (req, res) => {
   try {
@@ -58,4 +59,38 @@ const login = async (req, res) => {
     return res.status(500).send(error);
   }
 };
-module.exports = { login, createUser, getAllUser, deleteUser, updateUser };
+const changePassword = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (!id) {
+      return res.status(400).json({ message: "Id is required. " });
+    }
+    const user = await UserService.findById(id);
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "There is no user with this Id. " });
+    }
+
+    const isMatch = bcrypt.compare(req.body.currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Wrong Password. " });
+    }
+    const newPassword = await bcrypt.hash(req.body.newPassword, 8);
+    const updatedUser = await UserService.findByIdAndUpdate(id, {
+      password: newPassword,
+    });
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error);
+  }
+};
+module.exports = {
+  changePassword,
+  login,
+  createUser,
+  getAllUser,
+  deleteUser,
+  updateUser,
+};

@@ -9,7 +9,6 @@ async function createUser(userData) {
     throw error;
   }
 }
-
 async function getAllUser() {
   try {
     const users = await User.find();
@@ -66,6 +65,15 @@ async function findByEmail(email) {
     throw error;
   }
 }
+async function findByIdAndUpdate(id, update) {
+  try {
+    return await User.findByIdAndUpdate(id, update, { new: true });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 const UserService = {
   getAllUser,
   createUser,
@@ -74,5 +82,6 @@ const UserService = {
   findById,
   login,
   findByEmail,
+  findByIdAndUpdate,
 };
 module.exports = UserService;
