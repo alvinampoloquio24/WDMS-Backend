@@ -74,11 +74,16 @@ const changePassword = async (req, res) => {
         .json({ message: "There is no user with this Id. " });
     }
 
+    const isMatch = await bcrypt.compare(req.body.currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Wrong Password. " });
+    }
+
     const newPassword = await bcrypt.hash(req.body.newPassword, 8);
     const updatedUser = await User.findByIdAndUpdate(id, {
       password: newPassword,
     });
-    
+
     // Check if the user was updated successfully
     if (updatedUser) {
       return res.status(200).json({ message: "Password changed successfully." });
@@ -90,6 +95,7 @@ const changePassword = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+
 module.exports = {
   changePassword,
   login,
