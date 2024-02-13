@@ -1,7 +1,7 @@
 const UserService = require("../services/user");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-
+const jsonwebtoken = require("jsonwebtoken");
 const createUser = async (req, res) => {
   try {
     const user = await UserService.createUser(req.body);
@@ -55,7 +55,12 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "Wrong password. " });
     }
-    return res.status(200).json(user);
+    const token = jsonwebtoken.sign(
+      { _id: existUser._id.toString() },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.TOKEN_EXPIRE }
+    );
+    return res.status(200).json({ user, token });
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -70,10 +75,15 @@ const changePassword = async (req, res) => {
 
     const user = await User.findById(id);
     if (!user) {
-      return res.status(400).json({ message: "There is no user with this Id. " });
+      return res
+        .status(400)
+        .json({ message: "There is no user with this Id. " });
     }
 
-    const isMatch = await bcrypt.compare(req.body.currentPassword, user.password);
+    const isMatch = await bcrypt.compare(
+      req.body.currentPassword,
+      user.password
+    );
     if (!isMatch) {
       return res.status(400).json({ message: "Wrong Password. " });
     }
@@ -84,11 +94,15 @@ const changePassword = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 8);
-    const updatedUser = await User.findByIdAndUpdate(id, { password: hashedPassword });
+    const updatedUser = await User.findByIdAndUpdate(id, {
+      password: hashedPassword,
+    });
 
     // Check if the user was updated successfully
     if (updatedUser) {
-      return res.status(200).json({ message: "Password changed successfully." });
+      return res
+        .status(200)
+        .json({ message: "Password changed successfully." });
     } else {
       return res.status(400).json({ message: "Failed to change password." });
     }

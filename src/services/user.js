@@ -48,6 +48,7 @@ async function updateUser(id, userInfo) {
 async function login(email, password) {
   try {
     const user = await User.findOne({ email });
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       return user;

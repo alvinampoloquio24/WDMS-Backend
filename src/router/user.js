@@ -7,6 +7,7 @@ const {
   login,
   changePassword,
 } = require("../controllers/user");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -15,6 +16,6 @@ router.get("/fetchAllUser", getAllUser);
 router.delete("/deleteUser/:id", deleteUser);
 router.patch("/updateUser/:id", updateUser);
 router.post("/login", login);
-router.post("/changePassword",auth, changePassword); // corrected typo here
+router.post("/changePassword", auth, changePassword); // corrected typo here
 
 module.exports = router;
