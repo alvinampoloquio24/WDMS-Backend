@@ -1,5 +1,6 @@
 const UserService = require("../services/user");
 const bcrypt = require("bcrypt");
+const User = require("../models/user");
 
 const createUser = async (req, res) => {
   try {
@@ -59,28 +60,31 @@ const login = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+
 const changePassword = async (req, res) => {
   try {
     const id = req.params.id;
     if (!id) {
       return res.status(400).json({ message: "Id is required. " });
     }
-    const user = await UserService.findById(id);
+    const user = await User.findById(id);
     if (!user) {
       return res
         .status(400)
         .json({ message: "There is no user with this Id. " });
     }
 
-    const isMatch = bcrypt.compare(req.body.currentPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Wrong Password. " });
-    }
     const newPassword = await bcrypt.hash(req.body.newPassword, 8);
-    const updatedUser = await UserService.findByIdAndUpdate(id, {
+    const updatedUser = await User.findByIdAndUpdate(id, {
       password: newPassword,
     });
-    return res.status(200).json(updatedUser);
+    
+    // Check if the user was updated successfully
+    if (updatedUser) {
+      return res.status(200).json({ message: "Password changed successfully." });
+    } else {
+      return res.status(400).json({ message: "Failed to change password." });
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).send(error);
