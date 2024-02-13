@@ -67,11 +67,10 @@ const changePassword = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Id is required. " });
     }
+
     const user = await User.findById(id);
     if (!user) {
-      return res
-        .status(400)
-        .json({ message: "There is no user with this Id. " });
+      return res.status(400).json({ message: "There is no user with this Id. " });
     }
 
     const isMatch = await bcrypt.compare(req.body.currentPassword, user.password);
@@ -79,10 +78,13 @@ const changePassword = async (req, res) => {
       return res.status(400).json({ message: "Wrong Password. " });
     }
 
-    const newPassword = await bcrypt.hash(req.body.newPassword, 8);
-    const updatedUser = await User.findByIdAndUpdate(id, {
-      password: newPassword,
-    });
+    const newPassword = req.body.newPassword;
+    if (!newPassword) {
+      return res.status(400).json({ message: "New Password is required. " });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 8);
+    const updatedUser = await User.findByIdAndUpdate(id, { password: hashedPassword });
 
     // Check if the user was updated successfully
     if (updatedUser) {
