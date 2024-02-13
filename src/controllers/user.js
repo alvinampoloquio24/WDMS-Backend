@@ -63,7 +63,7 @@ const login = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.user._id;
     if (!id) {
       return res.status(400).json({ message: "Id is required. " });
     }
