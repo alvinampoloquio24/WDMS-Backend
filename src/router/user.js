@@ -15,6 +15,6 @@ router.get("/fetchAllUser", getAllUser);
 router.delete("/deleteUser/:id", deleteUser);
 router.patch("/updateUser/:id", updateUser);
 router.post("/login", login);
-router.post("/changePassword", changePassword); // corrected typo here
+router.post("/changePassword",auth, changePassword); // corrected typo here
 
 module.exports = router;
