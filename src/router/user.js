@@ -8,6 +8,7 @@ const {
   changePassword,
 } = require("../controllers/user");
 const auth = require("../middleware/auth");
+const Contribution = require("../controllers/contribution.js");
 
 const router = express.Router();
 
@@ -17,5 +18,9 @@ router.delete("/deleteUser/:id", deleteUser);
 router.patch("/updateUser/:id", updateUser);
 router.post("/login", login);
 router.post("/changePassword", auth, changePassword); // corrected typo here
-
+// contribution
+router.post("/addContribution", Contribution.addContribution);
+router.get("/getContribution", Contribution.getContribution);
+router.post("/editContribution/:id", Contribution.editContribution);
+router.delete("/deleteContribution/:id", Contribution.deleteContribution);
 module.exports = router;
