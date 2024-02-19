@@ -23,11 +23,6 @@ const contributionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now, // Setting default value to current date
   },
-  status: {
-    type: String,
-    enum: ["pending", "paid"],
-    default: "pending",
-  },
   daysAgo: {
     type: Number, // Change type to Number for storing days
   },

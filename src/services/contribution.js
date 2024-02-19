@@ -32,10 +32,19 @@ async function deleteContribution(id) {
     throw error;
   }
 }
+async function findContributionById(id) {
+  try {
+    return await Contribution.findById(id);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 const ContributionService = {
   addContribution,
   getContribution,
   editContribution,
   deleteContribution,
+  findContributionById,
 };
 module.exports = ContributionService;
