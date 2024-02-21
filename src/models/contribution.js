@@ -19,6 +19,10 @@ const contributionSchema = new mongoose.Schema({
   age: {
     type: String,
   },
+  status: {
+    type: String,
+    default: "pending",
+  },
   dateJoin: {
     type: Date,
     default: Date.now, // Setting default value to current date

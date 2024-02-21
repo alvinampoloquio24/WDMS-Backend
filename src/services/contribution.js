@@ -16,6 +16,14 @@ async function getContribution() {
     throw error;
   }
 }
+async function getContributionById(id) {
+  try {
+    return await Contribution.findById(id);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 async function editContribution(id, update) {
   try {
     return await Contribution.findByIdAndUpdate(id, update, { new: true });
@@ -42,6 +50,7 @@ async function findContributionById(id) {
 }
 const ContributionService = {
   addContribution,
+  getContributionById,
   getContribution,
   editContribution,
   deleteContribution,

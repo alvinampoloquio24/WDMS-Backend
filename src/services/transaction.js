@@ -44,12 +44,21 @@ async function deleteTransaction(id) {
     throw error;
   }
 }
+async function findTransaction(params) {
+  try {
+    return await Transaction.findOne(params);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 const TransactionService = {
   deleteTransaction,
   editTransaction,
   getTransaction,
   makePayment,
   findPayment,
+  findTransaction,
 };
 
 module.exports = TransactionService;

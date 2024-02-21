@@ -20,7 +20,8 @@ router.post("/login", login);
 router.post("/changePassword", auth, changePassword); // corrected typo here
 // contribution
 router.post("/addContribution", Contribution.addContribution);
-router.get("/getContribution", Contribution.getContribution);
+router.get("/getContribution", auth, Contribution.getContribution);
+router.get("/getContributionById/:id", auth, Contribution.getContributionById);
 router.post("/editContribution/:id", Contribution.editContribution);
 router.delete("/deleteContribution/:id", Contribution.deleteContribution);
 //transaction
@@ -28,4 +29,5 @@ router.post("/makePayment/:id", auth, Transaction.makePayment);
 router.get("/getSelfTransaction", auth, Transaction.getSelfTransaction);
 router.post("/editTransaction/:id", auth, Transaction.editTransaction);
 router.delete("/deleteTransaction/:id", auth, Transaction.deleteTransaction);
+router.get("/getAllTransaction", auth, Transaction.getAllTransaction);
 module.exports = router;

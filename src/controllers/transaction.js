@@ -76,7 +76,20 @@ const deleteTransaction = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+const getAllTransaction = async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(401).json({ messase: "Unathorize Request. " });
+    }
+    const transactions = await TransactionService.getTransaction();
+
+    return res.status(200).json(transactions);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
 const Transaction = {
+  getAllTransaction,
   makePayment,
   getSelfTransaction,
   editTransaction,
