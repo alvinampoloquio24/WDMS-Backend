@@ -6,7 +6,8 @@ const { Schema, model } = mongoose;
 function generateReferenceNumber() {
   // Logic to generate a unique reference number
   // This could use any method suitable for your application, e.g., UUID
-  return "REF_" + Math.random().toString(36).substr(2, 9);
+  const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  return "REF_" + currentDate + "_" + Math.random().toString(36).substr(2, 9);
 }
 
 const transactionSchema = new Schema({
@@ -35,6 +36,10 @@ const transactionSchema = new Schema({
   referenceNumber: {
     type: String,
     unique: true, // Ensures uniqueness of reference number
+  },
+  date: {
+    type: Date,
+    default: Date.now,
   },
 });
 

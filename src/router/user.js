@@ -30,4 +30,5 @@ router.get("/getSelfTransaction", auth, Transaction.getSelfTransaction);
 router.post("/editTransaction/:id", auth, Transaction.editTransaction);
 router.delete("/deleteTransaction/:id", auth, Transaction.deleteTransaction);
 router.get("/getAllTransaction", auth, Transaction.getAllTransaction);
+router.get("/findReference/:number", auth, Transaction.findReferenceNumber);
 module.exports = router;

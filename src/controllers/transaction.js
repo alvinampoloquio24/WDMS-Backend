@@ -88,12 +88,30 @@ const getAllTransaction = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+const findReferenceNumber = async (req, res) => {
+  try {
+    const refNumber = req.params.number;
+    if (!refNumber) {
+      return res
+        .status(400)
+        .json({ message: "Reference number is required. " });
+    }
+    const reference = await TransactionService.findReferenceNumber(refNumber);
+    if (!reference) {
+      return res.status(400).json({ message: "Reference not found. " });
+    }
+    return res.status(200).json(reference);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
 const Transaction = {
   getAllTransaction,
   makePayment,
   getSelfTransaction,
   editTransaction,
   deleteTransaction,
+  findReferenceNumber,
 };
 
 module.exports = Transaction;

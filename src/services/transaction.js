@@ -52,7 +52,16 @@ async function findTransaction(params) {
     throw error;
   }
 }
+async function findReferenceNumber(refNumber) {
+  try {
+    return await Transaction.findOne({ referenceNumber: refNumber });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 const TransactionService = {
+  findReferenceNumber,
   deleteTransaction,
   editTransaction,
   getTransaction,
