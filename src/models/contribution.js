@@ -11,10 +11,10 @@ const contributionSchema = new mongoose.Schema({
     type: String,
   },
   born: {
-    type: String,
+    type: Date,
   },
   died: {
-    type: String,
+    type: Date,
   },
   age: {
     type: String,
@@ -23,21 +23,36 @@ const contributionSchema = new mongoose.Schema({
     type: String,
     default: "pending",
   },
-  dateJoin: {
+  deadLine: {
     type: Date,
-    default: Date.now, // Setting default value to current date
+  },
+  countDown: {
+    type: Number,
   },
   daysAgo: {
-    type: Number, // Change type to Number for storing days
+    type: Number,
   },
 });
 
-// Pre-save hook to calculate daysAgo
+// Pre-save hook to calculate due date based on deadline
 contributionSchema.pre("save", function (next) {
-  // Calculate the difference in milliseconds between now and dateJoin
-  const millisecondsDiff = Date.now() - this.dateJoin.getTime();
-  // Convert milliseconds to days
-  this.daysAgo = Math.floor(millisecondsDiff / (1000 * 60 * 60 * 24));
+  if (!this.deadLine) {
+    return next(new Error("Deadline is required."));
+  }
+
+  // Assuming 'daysAgo' is the number of days before the deadline
+  const daysBeforeDeadline = this.daysAgo || 0;
+
+  // Calculate due date
+  const dueDate = new Date(this.deadLine);
+  dueDate.setDate(dueDate.getDate() - daysBeforeDeadline);
+
+  // Calculate countDown (number of days remaining until the due date)
+  const currentDate = new Date();
+  const countDown = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+
+  this.countDown = countDown;
+
   next();
 });
 
