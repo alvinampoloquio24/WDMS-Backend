@@ -23,7 +23,6 @@ const getContribution = async (req, res) => {
         "contribution._id": contribution._id,
         userId: id,
       });
-      console.log(transaction);
       if (transaction) {
         contribution.status = "paid";
       }
