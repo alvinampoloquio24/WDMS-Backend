@@ -1,5 +1,6 @@
 const ContributionService = require("../services/contribution");
 const TransactionService = require("../services/transaction");
+
 const addContribution = async (req, res) => {
   try {
     const constribution = await ContributionService.addContribution(req.body);
@@ -19,6 +20,9 @@ const getContribution = async (req, res) => {
     // Loop through contributions
     for (const contribution of contributions) {
       // Check if the contribution exists in the transaction schema
+      const countDown = await ContributionService.getCountdown(
+        contribution._id
+      );
       const transaction = await TransactionService.findTransaction({
         "contribution._id": contribution._id,
         userId: id,
@@ -26,6 +30,7 @@ const getContribution = async (req, res) => {
       if (transaction) {
         contribution.status = "paid";
       }
+      contribution.countDown = countDown;
     }
 
     // Return contributions with updated status
