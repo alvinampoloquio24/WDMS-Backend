@@ -70,6 +70,11 @@ const editContribution = async (req, res) => {
   try {
     const id = req.params.id;
     const update = req.body;
+    if (req.body.deadLine) {
+      return res
+        .status(400)
+        .json({ message: "Update must not include a deadline. " });
+    }
     const contribution = await ContributionService.editContribution(id, update);
     if (!contribution) {
       return res

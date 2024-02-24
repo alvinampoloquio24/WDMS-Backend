@@ -49,8 +49,10 @@ contributionSchema.pre("save", function (next) {
 
   // Calculate countDown (number of days remaining until the due date)
   const currentDate = new Date();
-  const countDown = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
-
+  let countDown = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+  if (countDown <= 0) {
+    countDown = 0;
+  }
   this.countDown = countDown;
 
   next();

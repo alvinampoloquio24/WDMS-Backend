@@ -44,6 +44,7 @@ async function deleteTransaction(id) {
     throw error;
   }
 }
+
 async function findTransaction(params) {
   try {
     return await Transaction.findOne(params);
