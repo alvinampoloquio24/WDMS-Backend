@@ -35,15 +35,14 @@ const contributionSchema = new mongoose.Schema({
 });
 
 // Pre-save hook to calculate due date based on deadline
+// Pre-save hook to calculate due date based on deadline and update countdown
 contributionSchema.pre("save", function (next) {
   if (!this.deadLine) {
     return next(new Error("Deadline is required."));
   }
 
-  // Assuming 'daysAgo' is the number of days before the deadline
-  const daysBeforeDeadline = this.daysAgo || 0;
-
   // Calculate due date
+  const daysBeforeDeadline = this.daysAgo || 0;
   const dueDate = new Date(this.deadLine);
   dueDate.setDate(dueDate.getDate() - daysBeforeDeadline);
 
@@ -54,6 +53,11 @@ contributionSchema.pre("save", function (next) {
     countDown = 0;
   }
   this.countDown = countDown;
+
+  // If deadLine field is modified, update countdown
+  if (this.isModified("deadLine")) {
+    this.countDown = countDown;
+  }
 
   next();
 });

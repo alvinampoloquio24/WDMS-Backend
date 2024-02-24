@@ -70,24 +70,43 @@ const editContribution = async (req, res) => {
   try {
     const id = req.params.id;
     const update = req.body;
-    if (req.body.deadLine) {
+
+    // Check if the update includes the deadLine field
+    if ("deadLine" in update) {
+      // If deadLine is updated, also update the countDown field
+      const contribution = await ContributionService.findContributionById(id);
+      if (!contribution) {
+        return res
+          .status(400)
+          .json({ message: "No contribution with provided id." });
+      }
+
+      contribution.deadLine = update.deadLine;
+
+      // Trigger save to update countDown
+      await contribution.save();
+    }
+
+    // Update the contribution
+    const updatedContribution = await ContributionService.editContribution(
+      id,
+      update
+    );
+    if (!updatedContribution) {
       return res
         .status(400)
-        .json({ message: "Update must not include a deadline. " });
+        .json({ message: "No contribution with provided id." });
     }
-    const contribution = await ContributionService.editContribution(id, update);
-    if (!contribution) {
-      return res
-        .status(400)
-        .json({ message: "No constrinution with provided id. " });
-    }
-    return res
-      .status(200)
-      .json({ message: "Update Successfully. ", contribution });
+
+    return res.status(200).json({
+      message: "Update Successfully.",
+      contribution: updatedContribution,
+    });
   } catch (error) {
     return res.status(500).send(error);
   }
 };
+
 const deleteContribution = async (req, res) => {
   try {
     const id = req.params.id;
