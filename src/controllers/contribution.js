@@ -3,9 +3,15 @@ const TransactionService = require("../services/transaction");
 
 const addContribution = async (req, res) => {
   try {
-    const constribution = await ContributionService.addContribution(req.body);
-
-    return res.status(201).json({ message: "Add Sucessfully", constribution });
+    let contribution = await ContributionService.addContribution(req.body);
+    if (!contribution) {
+      return res
+        .status(400)
+        .json({ mesage: "There is a problem creating a contribution. " });
+    }
+    const countDown = await ContributionService.getCountdown(contribution._id);
+    contribution.countDown = countDown;
+    return res.status(201).json({ message: "Add Sucessfully", contribution });
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -75,22 +81,6 @@ const editContribution = async (req, res) => {
   try {
     const id = req.params.id;
     const update = req.body;
-
-    // Check if the update includes the deadLine field
-    if ("deadLine" in update) {
-      // If deadLine is updated, also update the countDown field
-      const contribution = await ContributionService.findContributionById(id);
-      if (!contribution) {
-        return res
-          .status(400)
-          .json({ message: "No contribution with provided id." });
-      }
-
-      contribution.deadLine = update.deadLine;
-
-      // Trigger save to update countDown
-      await contribution.save();
-    }
 
     // Update the contribution
     const updatedContribution = await ContributionService.editContribution(

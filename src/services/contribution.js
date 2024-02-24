@@ -26,7 +26,14 @@ async function getContributionById(id) {
 }
 async function editContribution(id, update) {
   try {
-    return await Contribution.findByIdAndUpdate(id, update, { new: true });
+    let contribution = await Contribution.findByIdAndUpdate(id, update, {
+      new: true,
+    });
+    if (!contribution) {
+      return null;
+    }
+    contribution.countDown = await getCountdown(contribution._id);
+    return contribution;
   } catch (error) {
     console.log(error);
     throw error;
