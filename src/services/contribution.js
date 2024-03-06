@@ -8,9 +8,9 @@ async function addContribution(data) {
     throw error;
   }
 }
-async function getContribution(params) {
+async function getContribution() {
   try {
-    return await Contribution.find(params);
+    return await Contribution.find();
   } catch (error) {
     console.log(error);
     throw error;
