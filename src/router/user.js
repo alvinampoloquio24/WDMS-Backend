@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("../middleware/upload");
 const {
   createUser,
   getAllUser,
@@ -25,10 +26,17 @@ router.get("/getContributionById/:id", auth, Contribution.getContributionById);
 router.post("/editContribution/:id", Contribution.editContribution);
 router.delete("/deleteContribution/:id", Contribution.deleteContribution);
 //transaction
-router.post("/makePayment/:id", auth, Transaction.makePayment);
+router.post(
+  "/makePayment/:id",
+  auth,
+  upload.single("image"),
+  Transaction.makePayment
+);
 router.get("/getSelfTransaction", auth, Transaction.getSelfTransaction);
 router.post("/editTransaction/:id", auth, Transaction.editTransaction);
 router.delete("/deleteTransaction/:id", auth, Transaction.deleteTransaction);
 router.get("/getAllTransaction", auth, Transaction.getAllTransaction);
 router.get("/findReference/:number", auth, Transaction.findReferenceNumber);
+router.get("/getReport", auth, Transaction.getReport);
+router.post("/approveTransaction/:id", auth, Transaction.approveTransaction);
 module.exports = router;

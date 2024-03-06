@@ -51,6 +51,14 @@ async function login(email, password) {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
+      if (user.inPenalty === true) {
+        return {
+          error: {
+            message:
+              "You are in penalty mode, contact the admin for more information",
+          },
+        };
+      }
       return user;
     } else return null;
   } catch (error) {

@@ -1,9 +1,13 @@
 const UserService = require("../services/user");
 const bcrypt = require("bcrypt");
-const User = require("../models/user");
 const jsonwebtoken = require("jsonwebtoken");
+
 const createUser = async (req, res) => {
   try {
+    const isEmailExist = await UserService.findByEmail(req.body.email);
+    if (isEmailExist) {
+      return res.status(400).json({ message: "Email already used. " });
+    }
     const user = await UserService.createUser(req.body);
     return res.status(201).json(user);
   } catch (error) {
@@ -52,8 +56,11 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Wrong email." });
     }
     const user = await UserService.login(email, password);
+    console.log();
     if (!user) {
       return res.status(400).json({ message: "Wrong password. " });
+    } else if (user.error) {
+      return res.status(400).json({ message: user.error.message });
     }
     const token = jsonwebtoken.sign(
       { _id: existUser._id.toString() },
@@ -66,7 +73,6 @@ const login = async (req, res) => {
     return res.status(500).send(error);
   }
 };
-
 const changePassword = async (req, res) => {
   try {
     const id = req.user._id;
@@ -112,7 +118,6 @@ const changePassword = async (req, res) => {
     return res.status(500).send(error);
   }
 };
-
 module.exports = {
   changePassword,
   login,

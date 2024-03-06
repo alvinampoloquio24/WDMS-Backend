@@ -1,5 +1,6 @@
 const ContributionService = require("../services/contribution");
 const TransactionService = require("../services/transaction");
+const UserService = require("../services/user");
 
 const addContribution = async (req, res) => {
   try {
@@ -20,8 +21,22 @@ const getContribution = async (req, res) => {
   try {
     const id = req.user._id;
 
-    // Fetch contributions
-    const contributions = await ContributionService.getContribution();
+    const user = await UserService.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.inPenalty === true) {
+      return res.status(400).json({ message: "You are in penalty mode!" });
+    }
+
+    // Fetch contributions within the date range
+    const today = new Date();
+    const contributions = await ContributionService.getContribution({
+      date: { $gte: user.dateJoin, $lte: today },
+    });
+
+    let penalty = 0; // Initialize penalty count
 
     // Loop through contributions
     for (const contribution of contributions) {
@@ -29,14 +44,26 @@ const getContribution = async (req, res) => {
       const countDown = await ContributionService.getCountdown(
         contribution._id
       );
+
       const transaction = await TransactionService.findTransaction({
         "contribution._id": contribution._id,
         userId: id,
+        status: "paid",
       });
+
       if (transaction) {
         contribution.status = "paid";
       }
+
       contribution.countDown = countDown;
+
+      if (countDown === 0 && transaction && transaction.status === "pending") {
+        penalty++;
+      }
+    }
+
+    if (penalty >= 3) {
+      await UserService.findByIdAndUpdate(id, { inPenalty: true });
     }
 
     // Return contributions with updated status
@@ -46,6 +73,7 @@ const getContribution = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+
 const getContributionById = async (req, res) => {
   try {
     const id = req.user._id;

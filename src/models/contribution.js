@@ -7,14 +7,14 @@ const contributionSchema = new mongoose.Schema({
   lastName: {
     type: String,
   },
-  paymentMethod: {
-    type: String,
-  },
   born: {
     type: Date,
   },
   died: {
     type: Date,
+  },
+  amount: {
+    type: Number,
   },
   age: {
     type: String,
@@ -31,6 +31,10 @@ const contributionSchema = new mongoose.Schema({
   },
   daysAgo: {
     type: Number,
+  },
+  date: {
+    type: Date,
+    default: Date.now(),
   },
 });
 

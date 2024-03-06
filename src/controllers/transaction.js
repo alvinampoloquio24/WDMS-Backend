@@ -1,5 +1,8 @@
 const TransactionService = require("../services/transaction");
 const ContributionService = require("../services/contribution");
+const cloudinary = require("../config/cloudinary");
+const sendEmail = require("../email/email");
+
 const makePayment = async (req, res) => {
   try {
     const id = req.params.id;
@@ -7,6 +10,12 @@ const makePayment = async (req, res) => {
     const userId = req.user._id;
     const isPaid = await TransactionService.findPayment(userId, id);
 
+    if (req.file && req.file.path) {
+      // Check if req.file exists before accessing its path
+      const image = await cloudinary.uploader.upload(req.file.path);
+      data.image = image.url;
+      console.log(image.url);
+    }
     if (isPaid) {
       return res.status(400).json({ message: "Your are already paid. " });
     }
@@ -16,12 +25,21 @@ const makePayment = async (req, res) => {
         .status(400)
         .json({ message: "There is no contribution in provided Id. " });
     }
+    const contributionName = `${contribution.lastName} ${contribution.firstName}`;
+    const amount = contribution.amount;
     data.contribution = contribution;
     data.userId = userId;
-    data.status = "paid";
+    data.amount = contribution.amount;
 
     const transaction = await TransactionService.makePayment(data);
 
+    await sendEmail(
+      transaction.referenceNumber,
+      contributionName,
+      amount,
+      transaction.date,
+      data.email
+    );
     return res
       .status(201)
       .json({ message: "Successfully Paid. ", transaction });
@@ -105,6 +123,31 @@ const findReferenceNumber = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+const getReport = async (req, res) => {
+  try {
+    const { from, to } = req.query;
+    const report = await TransactionService.getReport(from, to);
+
+    return res.status(200).json(report);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+const approveTransaction = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const transaction = await TransactionService.approveTransaction(id);
+    if (!transaction) {
+      return res
+        .status(400)
+        .json({ message: "There is no transaction in provided Id. " });
+    }
+
+    return res.status(200).json({ message: "Approve Successfully. " });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
 const Transaction = {
   getAllTransaction,
   makePayment,
@@ -112,6 +155,8 @@ const Transaction = {
   editTransaction,
   deleteTransaction,
   findReferenceNumber,
+  getReport,
+  approveTransaction,
 };
 
 module.exports = Transaction;

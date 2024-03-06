@@ -17,25 +17,51 @@ const transactionSchema = new Schema({
   name: {
     type: String,
   },
+  email: {
+    type: String,
+  },
   number: {
     type: String,
   },
-  amount: {
-    type: String,
-  },
   contribution: {
-    type: Object,
+    type: {
+      _id: {
+        type: String,
+      },
+      firstName: {
+        type: String,
+      },
+      lastName: {
+        type: String,
+      },
+      born: {
+        type: Date,
+      },
+      died: {
+        type: Date,
+      },
+      age: {
+        type: String,
+      },
+      countDown: {
+        type: Number,
+      },
+    },
   },
   status: {
     type: String,
     enum: ["pending", "paid"],
+    default: "pending",
   },
-  paymentMethod: {
+  amount: {
+    type: Number,
+  },
+  image: {
     type: String,
   },
   referenceNumber: {
     type: String,
-    unique: true, // Ensures uniqueness of reference number
+    unique: true,
   },
   date: {
     type: Date,

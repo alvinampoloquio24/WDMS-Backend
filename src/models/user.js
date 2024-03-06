@@ -17,6 +17,7 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   gender: {
     type: String,
@@ -28,6 +29,14 @@ const userSchema = new Schema({
   registrationFee: {
     type: String,
     enum: ["gcash", "cash"],
+  },
+  inPenalty: {
+    type: Boolean,
+    default: false,
+  },
+  dateJoin: {
+    type: Date,
+    default: Date.now,
   },
 });
 
