@@ -63,9 +63,6 @@ async function findReferenceNumber(refNumber) {
 }
 async function getReport(from, to) {
   try {
-    console.log("From:", from);
-    console.log("To:", to);
-
     // Convert string dates to Date objects
     const fromDate = new Date(from);
     const toDate = new Date(to);
