@@ -13,7 +13,7 @@ const Contribution = require("../controllers/contribution.js");
 const Transaction = require("../controllers/transaction.js");
 const router = express.Router();
 
-router.post("/createUser", createUser);
+router.post("/createUser", upload.single("image"), createUser);
 router.get("/fetchAllUser", getAllUser);
 router.delete("/deleteUser/:id", deleteUser);
 router.patch("/updateUser/:id", updateUser);

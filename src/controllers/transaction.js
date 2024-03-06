@@ -14,7 +14,6 @@ const makePayment = async (req, res) => {
       // Check if req.file exists before accessing its path
       const image = await cloudinary.uploader.upload(req.file.path);
       data.image = image.url;
-      console.log(image.url);
     }
     if (isPaid) {
       return res.status(400).json({ message: "Your are already paid. " });

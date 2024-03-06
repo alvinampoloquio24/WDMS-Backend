@@ -43,8 +43,21 @@ const transactionSchema = new Schema({
       age: {
         type: String,
       },
-      countDown: {
-        type: Number,
+    },
+  },
+  registrationFee: {
+    type: {
+      _id: {
+        type: String,
+      },
+      firstName: {
+        type: String,
+      },
+      lastName: {
+        type: String,
+      },
+      email: {
+        type: String,
       },
     },
   },
@@ -58,6 +71,7 @@ const transactionSchema = new Schema({
   },
   image: {
     type: String,
+    default: null,
   },
   referenceNumber: {
     type: String,

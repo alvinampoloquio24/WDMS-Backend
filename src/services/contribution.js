@@ -8,9 +8,9 @@ async function addContribution(data) {
     throw error;
   }
 }
-async function getContribution() {
+async function getContribution(params) {
   try {
-    return await Contribution.find();
+    return await Contribution.find(params);
   } catch (error) {
     console.log(error);
     throw error;
@@ -55,7 +55,6 @@ async function findContributionById(id) {
     throw error;
   }
 }
-
 async function getCountdown(id) {
   try {
     // Find the contribution by its ID

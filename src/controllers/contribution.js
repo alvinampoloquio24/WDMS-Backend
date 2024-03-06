@@ -21,25 +21,28 @@ const getContribution = async (req, res) => {
   try {
     const id = req.user._id;
 
-    // const user = await UserService.findById(id);
-    // if (!user) {
-    //   return res.status(404).json({ message: "User not found" });
-    // }
+    // Fetch user details
+    const user = await UserService.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    // if (user.inPenalty === true) {
-    //   return res.status(400).json({ message: "You are in penalty mode!" });
-    // }
+    // Check penalty status
+    if (user.inPenalty) {
+      return res.status(400).json({ message: "You are in penalty mode!" });
+    }
 
-    // // Fetch contributions within the date range
-    // const today = new Date();
-    // const contributions = await ContributionService.getContribution({
-    //   date: { $gte: user.dateJoin },
-    // });
-    const contributions = await ContributionService.getContribution();
+    // Calculate the date range to fetch contributions
+    // Minus 24 hours , 1 day before join
+    const dateJoin = new Date(user.dateJoin) - 24 * 60 * 60 * 1000;
 
-    // let penalty = 0; // Initialize penalty count
+    // Fetch contributions within the date range
+    const contributions = await ContributionService.getContribution({
+      date: { $gte: dateJoin },
+    });
 
-    // Loop through contributions
+    let penaltyCount = 0; // Initialize penalty count
+
     for (const contribution of contributions) {
       // Check if the contribution exists in the transaction schema
       const countDown = await ContributionService.getCountdown(
@@ -58,14 +61,14 @@ const getContribution = async (req, res) => {
 
       contribution.countDown = countDown;
 
-      // if (countDown === 0 && transaction && transaction.status === "pending") {
-      //   penalty++;
-      // }
+      if (countDown === 0 && !transaction) {
+        penaltyCount++;
+      }
     }
 
-    // if (penalty >= 3) {
-    //   await UserService.findByIdAndUpdate(id, { inPenalty: true });
-    // }
+    if (penaltyCount >= 3) {
+      await UserService.findByIdAndUpdate(id, { inPenalty: true });
+    }
 
     // Return contributions with updated status
     return res.status(200).json(contributions);

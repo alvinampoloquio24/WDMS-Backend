@@ -8,7 +8,12 @@ const createUser = async (req, res) => {
     if (isEmailExist) {
       return res.status(400).json({ message: "Email already used. " });
     }
-    const user = await UserService.createUser(req.body);
+    let file;
+    if (req.file && req.file.path) {
+      file = req.file.path;
+    }
+    // Check if req.file exists before accessing its path
+    const user = await UserService.createUser(req.body, file);
     return res.status(201).json(user);
   } catch (error) {
     return res.status(500).send(error);

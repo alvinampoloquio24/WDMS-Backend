@@ -1,11 +1,33 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const TransactionService = require("./transaction");
+const cloudinary = require("../config/cloudinary");
 
-async function createUser(userData) {
+async function createUser(userData, file) {
   try {
     userData.password = await bcrypt.hash(userData.password, 8);
-    return await User.create(userData);
+    const user = await User.create(userData);
+
+    let imageUrl;
+    if (file) {
+      console.log("asds");
+      const image = await cloudinary.uploader.upload(file);
+      imageUrl = image.url;
+    }
+
+    await TransactionService.makePayment({
+      registrationFee: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      },
+      amount: 20,
+      image: imageUrl || null,
+    });
+    return user;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 }

@@ -2,9 +2,15 @@
 User
 if user has not contribute 3 times , account well be deactivated, 
 
+
 Contribution
 (get)  members can only access contributions made after they've joined
        This means that if someone becomes a member today, they won't have access to 
        contributions made before today, only those made from today onward. This ensures
        that each member can only access the contributions that are made during their time
        as a member and not contributions made before they joined.
+
+todo
+      add payment when create an account, 
+      adjust 24h when in new member 
+      
