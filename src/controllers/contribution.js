@@ -33,7 +33,7 @@ const getContribution = async (req, res) => {
     // Fetch contributions within the date range
     const today = new Date();
     const contributions = await ContributionService.getContribution({
-      date: { $gte: user.dateJoin, $lte: today },
+      date: { $gte: user.dateJoin },
     });
 
     let penalty = 0; // Initialize penalty count
