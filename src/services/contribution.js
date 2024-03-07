@@ -69,25 +69,17 @@ async function findContributionById(id) {
     throw error;
   }
 }
-async function getCountdown(id) {
+async function getCountdown(deadline) {
   try {
-    // Find the contribution by its ID
-    const contribution = await Contribution.findOne({ _id: id });
+    const currentDate = new Date(); // Get the current date
+    const deadlineDate = new Date(deadline); // Convert deadline string to Date object
+    const timeDiff = deadlineDate.getTime() - currentDate.getTime(); // Calculate the difference in milliseconds
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Convert milliseconds to days
 
-    // Calculate due date
-    const daysBeforeDeadline = contribution.daysAgo || 0;
-    const dueDate = new Date(contribution.deadLine);
-    dueDate.setDate(dueDate.getDate() - daysBeforeDeadline);
-
-    // Calculate countDown (number of days remaining until the due date)
-    const currentDate = new Date();
-    let countDown = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
-
-    if (countDown <= 0) {
-      countDown = 0;
+    if (daysDiff <= 0) {
+      return 0;
     }
-
-    return countDown;
+    return daysDiff; // Return the number of days before the deadline
   } catch (error) {
     console.log(error);
     throw error;

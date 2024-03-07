@@ -61,6 +61,9 @@ const transactionSchema = new Schema({
       },
     },
   },
+  paymentMethod: {
+    type: String,
+  },
   status: {
     type: String,
     enum: ["pending", "paid"],

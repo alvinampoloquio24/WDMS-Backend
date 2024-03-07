@@ -29,9 +29,6 @@ const contributionSchema = new mongoose.Schema({
   countDown: {
     type: Number,
   },
-  daysAgo: {
-    type: Number,
-  },
   date: {
     type: Date,
     default: Date.now(),

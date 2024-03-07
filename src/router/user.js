@@ -15,6 +15,7 @@ const auth = require("../middleware/auth");
 const Contribution = require("../controllers/contribution.js");
 const Transaction = require("../controllers/transaction.js");
 const permission = require("../middleware/permission");
+const Announcement = require("../controllers/announcement.js");
 const router = express.Router();
 
 //USER
@@ -141,6 +142,15 @@ router.post(
   auth,
   permission("edit", "RecycleBin"),
   RecycleBin.restoreData
+);
+
+//Announcement
+
+router.get(
+  "/getAnnouncement",
+  auth,
+  // permission("read", "Announcement"),
+  Announcement.getAnnouncement
 );
 
 module.exports = router;

@@ -5,7 +5,7 @@ const roles = {
     Transaction: ["manage"],
     RecycleBin: ["manage"],
   },
-  student: {
+  member: {
     User: ["updateSelf", "readSelf"],
     Contribution: ["read"],
     Transaction: ["create", "readSelf"],

@@ -4,14 +4,10 @@ const UserService = require("../services/user");
 
 const addContribution = async (req, res) => {
   try {
-    let contribution = await ContributionService.addContribution(req.body);
-    if (!contribution) {
-      return res
-        .status(400)
-        .json({ mesage: "There is a problem creating a contribution. " });
-    }
-    const countDown = await ContributionService.getCountdown(contribution._id);
-    contribution.countDown = countDown;
+    let data = req.body;
+    data.countDown = await ContributionService.getCountdown(data.deadLine);
+    let contribution = await ContributionService.addContribution(data);
+
     return res.status(201).json({ message: "Add Sucessfully", contribution });
   } catch (error) {
     return res.status(500).send(error);
@@ -27,19 +23,8 @@ const getContribution = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check penalty status
-    // if (user.inPenalty) {
-    //   return res.status(400).json({ message: "You are in penalty mode!" });
-    // }
-
-    // Calculate the date range to fetch contributions
-    // Minus 24 hours , 1 day before join
-    const dateJoin = new Date(user.dateJoin) - 24 * 60 * 60 * 1000;
-
     // Fetch contributions within the date range
-    const contributions = await ContributionService.getContribution({
-      date: { $gte: dateJoin },
-    });
+    const contributions = await ContributionService.getContribution();
 
     // let penaltyCount = 0; // Initialize penalty count
 
@@ -58,26 +43,14 @@ const getContribution = async (req, res) => {
       if (transaction) {
         contribution.status = "paid";
       }
-
-      contribution.countDown = countDown;
-
-      // if (countDown === 0 && !transaction) {
-      //   penaltyCount++;
-      // }
     }
 
-    // if (penaltyCount >= 3) {
-    //   await UserService.findByIdAndUpdate(id, { inPenalty: true });
-    // }
-
-    // Return contributions with updated status
     return res.status(200).json(contributions);
   } catch (error) {
     console.log(error);
     return res.status(500).send(error);
   }
 };
-
 const getContributionById = async (req, res) => {
   try {
     const id = req.user._id;
@@ -133,7 +106,6 @@ const editContribution = async (req, res) => {
     return res.status(500).send(error);
   }
 };
-
 const deleteContribution = async (req, res) => {
   try {
     const id = req.params.id;
