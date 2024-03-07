@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const Transaction = require("../models/transaction");
 const User = require("../models/user");
+const RecycleBinService = require("./recycleBin");
 
 async function makePayment(data) {
   try {
@@ -39,7 +40,12 @@ async function editTransaction(id, update) {
 }
 async function deleteTransaction(id) {
   try {
-    return await Transaction.findByIdAndDelete(id);
+    const transaction = await Transaction.findByIdAndDelete(id);
+    if (!transaction) {
+      return null;
+    }
+    await RecycleBinService.create("Transaction", transaction);
+    return transaction;
   } catch (error) {
     console.log(error);
     throw error;

@@ -1,5 +1,6 @@
 const express = require("express");
 const upload = require("../middleware/upload");
+const Recycle = require("../controllers/recycleBin.js");
 const {
   createUser,
   getAllUser,
@@ -39,4 +40,9 @@ router.get("/getAllTransaction", auth, Transaction.getAllTransaction);
 router.get("/findReference/:number", auth, Transaction.findReferenceNumber);
 router.get("/getReport", auth, Transaction.getReport);
 router.post("/approveTransaction/:id", auth, Transaction.approveTransaction);
+
+router.delete("/permanentDelete/:id", auth, Recycle.permanentDelete);
+router.get("/getAll", auth, Recycle.findAll);
+router.post("/restore/:id", auth, Recycle.restoreData);
+
 module.exports = router;

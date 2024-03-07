@@ -32,8 +32,11 @@ const deleteUser = async (req, res) => {
     if (!req.params.id) {
       return res.status(400).json({ message: "User Id is required. " });
     }
-    const users = await UserService.deleteUser(req.params.id);
-    return res.status(200).json(users);
+    const user = await UserService.deleteUser(req.params.id);
+    if (!user) {
+      return res.status(400).json({ message: "Id not exist. " });
+    }
+    return res.status(200).json({ message: "Delete Successfully ", user });
   } catch (error) {
     return res.status(500).send(error);
   }

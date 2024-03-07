@@ -2,6 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const TransactionService = require("./transaction");
 const cloudinary = require("../config/cloudinary");
+const RecycleBinService = require("./recycleBin");
 
 async function createUser(userData, file) {
   try {
@@ -42,8 +43,13 @@ async function getAllUser() {
 async function deleteUser(id) {
   try {
     const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      return null;
+    }
+    await RecycleBinService.create("User", user);
     return user;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 }
@@ -55,7 +61,6 @@ async function findById(id) {
     throw error;
   }
 }
-
 async function updateUser(id, userInfo) {
   try {
     if (userInfo.password) {

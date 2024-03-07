@@ -1,4 +1,5 @@
 const Contribution = require("../models/contribution");
+const RecycleBinService = require("./recycleBin");
 
 async function addContribution(data) {
   try {
@@ -41,7 +42,11 @@ async function editContribution(id, update) {
 }
 async function deleteContribution(id) {
   try {
-    return await Contribution.findByIdAndDelete(id, { new: true });
+    const contribution = await Contribution.findByIdAndDelete(id, {
+      new: true,
+    });
+    await RecycleBinService.create("Contribution", contribution);
+    return contribution;
   } catch (error) {
     console.log(error);
     throw error;

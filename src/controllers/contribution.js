@@ -28,9 +28,9 @@ const getContribution = async (req, res) => {
     }
 
     // Check penalty status
-    if (user.inPenalty) {
-      return res.status(400).json({ message: "You are in penalty mode!" });
-    }
+    // if (user.inPenalty) {
+    //   return res.status(400).json({ message: "You are in penalty mode!" });
+    // }
 
     // Calculate the date range to fetch contributions
     // Minus 24 hours , 1 day before join
@@ -41,7 +41,7 @@ const getContribution = async (req, res) => {
       date: { $gte: dateJoin },
     });
 
-    let penaltyCount = 0; // Initialize penalty count
+    // let penaltyCount = 0; // Initialize penalty count
 
     for (const contribution of contributions) {
       // Check if the contribution exists in the transaction schema
@@ -61,14 +61,14 @@ const getContribution = async (req, res) => {
 
       contribution.countDown = countDown;
 
-      if (countDown === 0 && !transaction) {
-        penaltyCount++;
-      }
+      // if (countDown === 0 && !transaction) {
+      //   penaltyCount++;
+      // }
     }
 
-    if (penaltyCount >= 3) {
-      await UserService.findByIdAndUpdate(id, { inPenalty: true });
-    }
+    // if (penaltyCount >= 3) {
+    //   await UserService.findByIdAndUpdate(id, { inPenalty: true });
+    // }
 
     // Return contributions with updated status
     return res.status(200).json(contributions);
