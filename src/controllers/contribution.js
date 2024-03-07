@@ -150,6 +150,14 @@ const deleteContribution = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+const getAllContribution = async (req, res) => {
+  try {
+    const contributions = await ContributionService.getContribution();
+    return res.status(200).json(contributions);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
 
 const Contribution = {
   getContributionById,
@@ -157,5 +165,6 @@ const Contribution = {
   getContribution,
   editContribution,
   deleteContribution,
+  getAllContribution,
 };
 module.exports = Contribution;

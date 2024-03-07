@@ -87,8 +87,7 @@ const changePassword = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Id is required. " });
     }
-
-    const user = await User.findById(id);
+    const user = await UserService.findById(id);
     if (!user) {
       return res
         .status(400)
@@ -109,7 +108,7 @@ const changePassword = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 8);
-    const updatedUser = await User.findByIdAndUpdate(id, {
+    const updatedUser = await UserService.findByIdAndUpdate(id, {
       password: hashedPassword,
     });
 
@@ -126,6 +125,32 @@ const changePassword = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+const readSelf = async function (req, res) {
+  try {
+    const id = req.user.id;
+    const user = await UserService.findById(id);
+
+    return res.status(200).json(user);
+  } catch (error) {
+    throw error;
+  }
+};
+const updateSelf = async function (req, res) {
+  try {
+    const id = req.user.id;
+    const update = req.body;
+    if (update.role) {
+      return res
+        .status(400)
+        .json({ message: "Updates must not incude the role. " });
+    }
+    const user = await UserService.findByIdAndUpdate(id, update);
+
+    return res.status(200).json(user);
+  } catch (error) {
+    throw error;
+  }
+};
 module.exports = {
   changePassword,
   login,
@@ -133,4 +158,6 @@ module.exports = {
   getAllUser,
   deleteUser,
   updateUser,
+  readSelf,
+  updateSelf,
 };

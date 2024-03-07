@@ -11,7 +11,11 @@ async function addContribution(data) {
 }
 async function getContribution(params) {
   try {
-    return await Contribution.find(params);
+    if (params) {
+      return await Contribution.find(params);
+    } else {
+      return await Contribution.find();
+    }
   } catch (error) {
     console.log(error);
     throw error;
@@ -45,7 +49,12 @@ async function deleteContribution(id) {
     const contribution = await Contribution.findByIdAndDelete(id, {
       new: true,
     });
+    if (!contribution) {
+      return null;
+    }
+
     await RecycleBinService.create("Contribution", contribution);
+
     return contribution;
   } catch (error) {
     console.log(error);

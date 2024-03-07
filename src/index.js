@@ -4,7 +4,6 @@ const userRouter = require("./router/user");
 const express = require("express");
 const connectToDatabase = require("./config/database");
 const cors = require("cors");
-const sendEmail = require("./email/email");
 
 const PORT = process.env.PORT || 3001; // Default to 3001 if PORT is not specified in .env
 
