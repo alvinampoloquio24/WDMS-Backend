@@ -13,7 +13,10 @@ async function makePayment(data) {
 }
 async function getTransaction(params) {
   try {
-    return await Transaction.find(params);
+    if (params) {
+      return await Transaction.find(params);
+    }
+    return await Transaction.find();
   } catch (error) {
     console.log(error);
     throw error;

@@ -152,5 +152,11 @@ router.get(
   // permission("read", "Announcement"),
   Announcement.getAnnouncement
 );
+router.post(
+  "/createAnnouncement",
+  auth,
+  permission("create", "Announcement"),
+  Announcement.createAnnouncement
+);
 
 module.exports = router;

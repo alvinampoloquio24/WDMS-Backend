@@ -47,9 +47,6 @@ const transactionSchema = new Schema({
   },
   registrationFee: {
     type: {
-      _id: {
-        type: String,
-      },
       firstName: {
         type: String,
       },

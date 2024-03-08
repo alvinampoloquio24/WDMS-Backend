@@ -32,13 +32,14 @@ const makePayment = async (req, res) => {
 
     const transaction = await TransactionService.makePayment(data);
 
-    await sendEmail(
-      transaction.referenceNumber,
-      contributionName,
-      amount,
-      transaction.date,
-      data.email
-    );
+    console.log(data.email);
+    // await sendEmail(
+    //   transaction.referenceNumber,
+    //   contributionName,
+    //   amount,
+    //   transaction.date,
+    //   data.email
+    // );
     return res
       .status(201)
       .json({ message: "Successfully Paid. ", transaction });
@@ -95,10 +96,8 @@ const deleteTransaction = async (req, res) => {
 };
 const getAllTransaction = async (req, res) => {
   try {
-    if (req.user.role !== "admin") {
-      return res.status(401).json({ messase: "Unathorize Request. " });
-    }
     const transactions = await TransactionService.getTransaction();
+    console.log(transactions);
 
     return res.status(200).json(transactions);
   } catch (error) {

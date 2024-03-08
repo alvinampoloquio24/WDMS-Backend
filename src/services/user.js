@@ -11,14 +11,13 @@ async function createUser(userData, file) {
 
     let imageUrl;
     if (file) {
-      console.log("asds");
       const image = await cloudinary.uploader.upload(file);
       imageUrl = image.url;
     }
 
-    await TransactionService.makePayment({
+    const a = await TransactionService.makePayment({
       registrationFee: {
-        _id: user._id,
+        userId: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
@@ -26,6 +25,7 @@ async function createUser(userData, file) {
       amount: 20,
       image: imageUrl || null,
     });
+    console.log("asdsa", a);
     return user;
   } catch (error) {
     console.log(error);

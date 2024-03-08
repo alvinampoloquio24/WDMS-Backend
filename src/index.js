@@ -4,7 +4,7 @@ const userRouter = require("./router/user");
 const express = require("express");
 const connectToDatabase = require("./config/database");
 const cors = require("cors");
-const { checkAndNotifyDeadlines, test } = require("./services/notification");
+const Notification = require("./services/notification");
 const cron = require("node-cron");
 
 const PORT = process.env.PORT || 3001; // Default to 3001 if PORT is not specified in .env
@@ -14,12 +14,11 @@ app.use(cors());
 app.use(express.json());
 connectToDatabase();
 
-// cron.schedule("1 * * * * *", function () {
-//   // This runs at midnight every day
-//   console.log("Running a task every day at midnight");
-//   checkAndNotifyDeadlines();
-// });
-// test();
+cron.schedule("0 0 * * *", function () {
+  console.log("update", Date.now());
+  Notification();
+});
+
 // Routes
 app.post("/", (req, res) => {
   res.send("Hello, this is your Express server!");
