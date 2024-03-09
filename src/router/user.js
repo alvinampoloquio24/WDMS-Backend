@@ -149,7 +149,7 @@ router.post(
 router.get(
   "/getAnnouncement",
   auth,
-  // permission("read", "Announcement"),
+  permission("read", "Announcement"),
   Announcement.getAnnouncement
 );
 router.post(

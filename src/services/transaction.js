@@ -70,6 +70,14 @@ async function findReferenceNumber(refNumber) {
     throw error;
   }
 }
+async function isPaid(id) {
+  try {
+    return await Transaction.findOne({ _id: id, status: "paid" });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 async function getReport(from, to) {
   try {
     // Convert string dates to Date objects
@@ -138,6 +146,7 @@ const TransactionService = {
   findTransaction,
   getReport,
   approveTransaction,
+  isPaid,
 };
 
 module.exports = TransactionService;

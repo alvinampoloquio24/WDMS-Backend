@@ -29,10 +29,10 @@ const makePayment = async (req, res) => {
     data.contribution = contribution;
     data.userId = userId;
     data.amount = contribution.amount;
+    data.status = "Waiting for approval";
 
     const transaction = await TransactionService.makePayment(data);
 
-    console.log(data.email);
     // await sendEmail(
     //   transaction.referenceNumber,
     //   contributionName,
@@ -97,7 +97,6 @@ const deleteTransaction = async (req, res) => {
 const getAllTransaction = async (req, res) => {
   try {
     const transactions = await TransactionService.getTransaction();
-    console.log(transactions);
 
     return res.status(200).json(transactions);
   } catch (error) {
@@ -134,6 +133,12 @@ const getReport = async (req, res) => {
 const approveTransaction = async (req, res) => {
   try {
     const id = req.params.id;
+    const isPaid = await TransactionService.isPaid(id);
+    if (isPaid) {
+      return res
+        .status(400)
+        .json({ message: "Transaction is already approve. " });
+    }
     const transaction = await TransactionService.approveTransaction(id);
     if (!transaction) {
       return res

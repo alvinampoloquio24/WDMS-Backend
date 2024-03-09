@@ -24,8 +24,9 @@ async function createUser(userData, file) {
       },
       amount: 20,
       image: imageUrl || null,
+      status: "Waiting for approval",
     });
-    console.log("asdsa", a);
+
     return user;
   } catch (error) {
     console.log(error);

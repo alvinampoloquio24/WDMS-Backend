@@ -10,12 +10,14 @@ const roles = {
     User: ["updateSelf", "readSelf"],
     Contribution: ["read"],
     Transaction: ["create", "readSelf"],
+    Announcement: ["read"],
   },
   cashier: {
     User: ["read", "readSelf", "updateSelf"],
     Contribution: ["read", "readALL"],
     Transaction: ["manage"],
     RecycleBin: ["create"],
+    Announcement: ["read"],
   },
 };
 

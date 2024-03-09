@@ -64,7 +64,7 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Wrong email." });
     }
     const user = await UserService.login(email, password);
-    console.log();
+
     if (!user) {
       return res.status(400).json({ message: "Wrong password. " });
     } else if (user.error) {

@@ -63,8 +63,8 @@ const transactionSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "paid"],
-    default: "pending",
+    enum: ["paid", "Waiting for approval"],
+    default: "Waiting for approval",
   },
   amount: {
     type: Number,
