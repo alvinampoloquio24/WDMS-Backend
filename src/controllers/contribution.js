@@ -37,11 +37,12 @@ const getContribution = async (req, res) => {
       const transaction = await TransactionService.findTransaction({
         "contribution._id": contribution._id,
         userId: id,
-        status: "paid",
       });
 
       if (transaction) {
-        contribution.status = "paid";
+        contribution.status = transaction.status;
+      } else {
+        contribution.status = "pending";
       }
     }
 

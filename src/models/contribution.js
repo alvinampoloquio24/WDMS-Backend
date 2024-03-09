@@ -21,7 +21,7 @@ const contributionSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "pending",
+    enum: ["paid", "Waiting for approval", "pending"],
   },
   deadLine: {
     type: Date,

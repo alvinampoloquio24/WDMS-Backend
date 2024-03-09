@@ -62,6 +62,18 @@ async function findTransaction(params) {
     throw error;
   }
 }
+async function findAllTransaction(key) {
+  try {
+    if (key) {
+      return await Transaction.find(key);
+    } else {
+      return await Transaction.find();
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 async function findReferenceNumber(refNumber) {
   try {
     return await Transaction.findOne({ referenceNumber: refNumber });
@@ -81,28 +93,31 @@ async function isPaid(id) {
 async function getReport(from, to) {
   try {
     // Convert string dates to Date objects
-    const fromDate = new Date(from);
-    const toDate = new Date(to);
+    // const fromDate = new Date(from);
+    // const toDate = new Date(to);
 
     // Adjust toDate to include transactions up to the end of the 'to' day
-    toDate.setDate(toDate.getDate() + 1);
+    // toDate.setDate(toDate.getDate() + 1);
 
     // Query transactions within the date range
-    const transactions = await Transaction.find({
-      date: {
-        $gte: fromDate,
-        $lt: toDate,
-      },
-      status: "paid",
-    });
+    const transactions = await Transaction.find();
 
+    let paid = 0,
+      waitingForapproval = 0;
+    for (const transaction of transactions) {
+      if (transaction.status === "paid") {
+        paid++;
+      } else {
+        waitingForapproval++;
+      }
+    }
     // Query new members within the date range based on the dateJoin field
-    const newMembers = await User.find({
-      dateJoin: {
-        $gte: fromDate,
-        $lt: toDate,
-      },
-    });
+    // const newMembers = await User.find({
+    //   dateJoin: {
+    //     $gte: fromDate,
+    //     $lt: toDate,
+    //   },
+    // });
 
     // Calculate total amount
     let totalAmount = 0;
@@ -111,15 +126,18 @@ async function getReport(from, to) {
     });
 
     // Calculate the number of new members
-    const newMemberCount = newMembers.length;
 
     // Calculate the number of remaining members
     const remainingMembers = await User.countDocuments();
 
     const report = {
-      totalAmountOfContribution: totalAmount,
-      newMembers: newMemberCount,
-      remainingMembers: remainingMembers,
+      totalamount: totalAmount,
+
+      totalNumberMember: remainingMembers,
+      transaction: {
+        paid,
+        waitingForapproval,
+      },
     };
     return report;
   } catch (error) {
@@ -147,6 +165,7 @@ const TransactionService = {
   getReport,
   approveTransaction,
   isPaid,
+  findAllTransaction,
 };
 
 module.exports = TransactionService;

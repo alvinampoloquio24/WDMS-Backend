@@ -96,7 +96,11 @@ const deleteTransaction = async (req, res) => {
 };
 const getAllTransaction = async (req, res) => {
   try {
-    const transactions = await TransactionService.getTransaction();
+    const key = req.query.status;
+
+    const transactions = await TransactionService.getTransaction({
+      status: key,
+    });
 
     return res.status(200).json(transactions);
   } catch (error) {
@@ -122,8 +126,8 @@ const findReferenceNumber = async (req, res) => {
 };
 const getReport = async (req, res) => {
   try {
-    const { from, to } = req.query;
-    const report = await TransactionService.getReport(from, to);
+    // const { from, to } = req.query;
+    const report = await TransactionService.getReport();
 
     return res.status(200).json(report);
   } catch (error) {
