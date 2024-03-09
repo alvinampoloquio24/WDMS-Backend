@@ -9,7 +9,7 @@ const roles = {
   member: {
     User: ["updateSelf", "readSelf"],
     Contribution: ["read"],
-    Transaction: ["create", "readSelf"],
+    Transaction: ["create", "readSelf, createReport"],
     Announcement: ["read"],
   },
   cashier: {
