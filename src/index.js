@@ -15,7 +15,8 @@ app.use(express.json());
 connectToDatabase();
 
 cron.schedule("0 0 * * *", function () {
-  console.log("update", Date.now());
+  const today = new Date(); // Get the current date
+  console.log(today);
   Notification();
 });
 

@@ -126,10 +126,14 @@ const findReferenceNumber = async (req, res) => {
 };
 const getReport = async (req, res) => {
   try {
-    // const { from, to } = req.query;
-    const report = await TransactionService.getReport();
-
-    return res.status(200).json(report);
+    const { from, to } = req.query;
+    if (from && to) {
+      const report = await TransactionService.getReportWithParamas(from, to);
+      return res.status(200).json(report);
+    } else {
+      const report = await TransactionService.getReport();
+      return res.status(200).json(report);
+    }
   } catch (error) {
     return res.status(500).send(error);
   }

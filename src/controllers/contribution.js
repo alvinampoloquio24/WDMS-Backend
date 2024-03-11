@@ -44,6 +44,7 @@ const getContribution = async (req, res) => {
       } else {
         contribution.status = "pending";
       }
+      contribution.countDown = countDown;
     }
 
     return res.status(200).json(contributions);

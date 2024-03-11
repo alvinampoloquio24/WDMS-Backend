@@ -90,60 +90,91 @@ async function isPaid(id) {
     throw error;
   }
 }
-async function getReport(from, to) {
+async function getReport() {
   try {
-    // Convert string dates to Date objects
-    // const fromDate = new Date(from);
-    // const toDate = new Date(to);
-
-    // Adjust toDate to include transactions up to the end of the 'to' day
-    // toDate.setDate(toDate.getDate() + 1);
-
-    // Query transactions within the date range
     const transactions = await Transaction.find();
 
     let paid = 0,
-      waitingForapproval = 0;
-    for (const transaction of transactions) {
+      waitingForApproval = 0;
+
+    transactions.forEach((transaction) => {
       if (transaction.status === "paid") {
         paid++;
       } else {
-        waitingForapproval++;
+        waitingForApproval++;
       }
-    }
-    // Query new members within the date range based on the dateJoin field
-    // const newMembers = await User.find({
-    //   dateJoin: {
-    //     $gte: fromDate,
-    //     $lt: toDate,
-    //   },
-    // });
+    });
 
-    // Calculate total amount
     let totalAmount = 0;
     transactions.forEach((transaction) => {
       totalAmount += transaction.amount;
     });
 
-    // Calculate the number of new members
-
-    // Calculate the number of remaining members
     const remainingMembers = await User.countDocuments();
 
     const report = {
-      totalamount: totalAmount,
-
+      totalAmount: totalAmount,
       totalNumberMember: remainingMembers,
-      transaction: {
+      transactions: {
         paid,
-        waitingForapproval,
+        waitingForApproval,
       },
     };
     return report;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
+}
+async function getReportWithParamas(from, to) {
+  const fromDate = new Date(from);
+  const toDate = new Date(to);
+  toDate.setDate(toDate.getDate() + 1);
+
+  const transactions = await Transaction.find({
+    date: {
+      $gte: fromDate,
+      $lt: toDate,
+    },
+  });
+
+  let paid = 0,
+    waitingForApproval = 0;
+
+  transactions.forEach((transaction) => {
+    if (transaction.status === "paid") {
+      paid++;
+    } else {
+      waitingForApproval++;
+    }
+  });
+
+  const newMembers = await User.find({
+    dateJoin: {
+      $gte: fromDate,
+      $lt: toDate,
+    },
+  });
+  const newMembersCount = newMembers.length;
+
+  let totalAmount = 0;
+  transactions.forEach((transaction) => {
+    totalAmount += transaction.amount;
+  });
+
+  const remainingMembers = await User.countDocuments();
+
+  const report = {
+    message: `Report from ${from} to ${to}`,
+    totalAmount: totalAmount,
+    newMembers: newMembersCount,
+    totalNumberMember: remainingMembers,
+    transactions: {
+      paid,
+      waitingForApproval,
+    },
+  };
+  return report;
 }
 
 async function approveTransaction(id) {
@@ -166,6 +197,7 @@ const TransactionService = {
   approveTransaction,
   isPaid,
   findAllTransaction,
+  getReportWithParamas,
 };
 
 module.exports = TransactionService;
