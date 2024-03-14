@@ -158,5 +158,6 @@ router.post(
   permission("create", "Announcement"),
   Announcement.createAnnouncement
 );
+router.get("/getUnpaidUsers", auth, Transaction.getUnpaidUsers);
 
 module.exports = router;

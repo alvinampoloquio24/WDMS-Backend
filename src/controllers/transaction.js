@@ -3,7 +3,7 @@ const ContributionService = require("../services/contribution");
 const cloudinary = require("../config/cloudinary");
 const sendEmail = require("../email/email");
 
-const makePayment = async (req, res) => {
+const makePayment = async (req, res, next) => {
   try {
     const id = req.params.id;
     let data = req.body;
@@ -44,19 +44,19 @@ const makePayment = async (req, res) => {
       .status(201)
       .json({ message: "Successfully Paid. ", transaction });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const getSelfTransaction = async (req, res) => {
+const getSelfTransaction = async (req, res, next) => {
   try {
     const params = { userId: req.user._id };
     const transaction = await TransactionService.getTransaction(params);
     return res.status(200).json(transaction);
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const editTransaction = async (req, res) => {
+const editTransaction = async (req, res, next) => {
   try {
     const id = req.params.id;
     if (!id) {
@@ -72,10 +72,10 @@ const editTransaction = async (req, res) => {
       .status(200)
       .json({ message: "Update Successfully. ", transaction });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const deleteTransaction = async (req, res) => {
+const deleteTransaction = async (req, res, next) => {
   try {
     const id = req.params.id;
     if (!id) {
@@ -91,10 +91,10 @@ const deleteTransaction = async (req, res) => {
       .status(200)
       .json({ message: "Delete Successfully. ", transaction });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const getAllTransaction = async (req, res) => {
+const getAllTransaction = async (req, res, next) => {
   try {
     const key = req.query.status;
 
@@ -104,10 +104,10 @@ const getAllTransaction = async (req, res) => {
 
     return res.status(200).json(transactions);
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const findReferenceNumber = async (req, res) => {
+const findReferenceNumber = async (req, res, next) => {
   try {
     const refNumber = req.params.number;
     if (!refNumber) {
@@ -121,10 +121,10 @@ const findReferenceNumber = async (req, res) => {
     }
     return res.status(200).json(reference);
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const getReport = async (req, res) => {
+const getReport = async (req, res, next) => {
   try {
     const { from, to } = req.query;
     if (from && to) {
@@ -135,10 +135,10 @@ const getReport = async (req, res) => {
       return res.status(200).json(report);
     }
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const approveTransaction = async (req, res) => {
+const approveTransaction = async (req, res, next) => {
   try {
     const id = req.params.id;
     const isPaid = await TransactionService.isPaid(id);
@@ -156,7 +156,16 @@ const approveTransaction = async (req, res) => {
 
     return res.status(200).json({ message: "Approve Successfully. " });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
+  }
+};
+const getUnpaidUsers = async (req, res, next) => {
+  try {
+    const users = await ContributionService.getUserUnpaidContribution();
+
+    return res.send(users);
+  } catch (error) {
+    return next(error);
   }
 };
 const Transaction = {
@@ -168,6 +177,7 @@ const Transaction = {
   findReferenceNumber,
   getReport,
   approveTransaction,
+  getUnpaidUsers,
 };
 
 module.exports = Transaction;

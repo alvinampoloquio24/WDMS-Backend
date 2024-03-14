@@ -6,6 +6,7 @@ const connectToDatabase = require("./config/database");
 const cors = require("cors");
 const Notification = require("./services/notification");
 const cron = require("node-cron");
+const errorHandler = require("./middleware/errorHandler");
 
 const PORT = process.env.PORT || 3001; // Default to 3001 if PORT is not specified in .env
 
@@ -27,8 +28,9 @@ app.post("/", (req, res) => {
 
 // Use userRouter for "/user" routes
 app.use(userRouter);
+app.use(errorHandler);
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running`);
 });

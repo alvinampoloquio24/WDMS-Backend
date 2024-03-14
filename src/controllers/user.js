@@ -2,7 +2,7 @@ const UserService = require("../services/user");
 const bcrypt = require("bcrypt");
 const jsonwebtoken = require("jsonwebtoken");
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   try {
     const isEmailExist = await UserService.findByEmail(req.body.email);
     if (isEmailExist) {
@@ -12,22 +12,23 @@ const createUser = async (req, res) => {
     if (req.file && req.file.path) {
       file = req.file.path;
     }
+
     // Check if req.file exists before accessing its path
     const user = await UserService.createUser(req.body, file);
     return res.status(201).json(user);
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const getAllUser = async (req, res) => {
+const getAllUser = async (req, res, next) => {
   try {
     const users = await UserService.getAllUser();
     return res.status(200).json(users);
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
   try {
     if (!req.params.id) {
       return res.status(400).json({ message: "User Id is required. " });
@@ -38,10 +39,10 @@ const deleteUser = async (req, res) => {
     }
     return res.status(200).json({ message: "Delete Successfully ", user });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   try {
     if (!req.params.id) {
       return res.status(400).json({ message: "User Id is required. " });
@@ -53,10 +54,10 @@ const updateUser = async (req, res) => {
     const users = await UserService.updateUser(req.params.id, req.body);
     return res.status(200).json(users);
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const existUser = await UserService.findByEmail(email);
@@ -77,11 +78,10 @@ const login = async (req, res) => {
     );
     return res.status(200).json({ user, token });
   } catch (error) {
-    console.log(error);
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const changePassword = async (req, res) => {
+const changePassword = async (req, res, next) => {
   try {
     const id = req.user._id;
     if (!id) {
@@ -121,21 +121,20 @@ const changePassword = async (req, res) => {
       return res.status(400).json({ message: "Failed to change password." });
     }
   } catch (error) {
-    console.log(error);
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const readSelf = async function (req, res) {
+const readSelf = async function (req, res, next) {
   try {
     const id = req.user.id;
     const user = await UserService.findById(id);
 
     return res.status(200).json(user);
   } catch (error) {
-    throw error;
+    return next(error);
   }
 };
-const updateSelf = async function (req, res) {
+const updateSelf = async function (req, res, next) {
   try {
     const id = req.user.id;
     const update = req.body;
@@ -148,7 +147,7 @@ const updateSelf = async function (req, res) {
 
     return res.status(200).json(user);
   } catch (error) {
-    throw error;
+    return next(error);
   }
 };
 module.exports = {

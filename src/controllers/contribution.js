@@ -2,7 +2,7 @@ const ContributionService = require("../services/contribution");
 const TransactionService = require("../services/transaction");
 const UserService = require("../services/user");
 
-const addContribution = async (req, res) => {
+const addContribution = async (req, res, next) => {
   try {
     let data = req.body;
     data.countDown = await ContributionService.getCountdown(data.deadLine);
@@ -10,10 +10,10 @@ const addContribution = async (req, res) => {
 
     return res.status(201).json({ message: "Add Sucessfully", contribution });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const getContribution = async (req, res) => {
+const getContribution = async (req, res, next) => {
   try {
     const id = req.user._id;
 
@@ -49,11 +49,10 @@ const getContribution = async (req, res) => {
 
     return res.status(200).json(contributions);
   } catch (error) {
-    console.log(error);
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const getContributionById = async (req, res) => {
+const getContributionById = async (req, res, next) => {
   try {
     const id = req.user._id;
     const contributionId = req.params.id;
@@ -80,11 +79,10 @@ const getContributionById = async (req, res) => {
     // Return contributions with updated status
     return res.status(200).json(contribution);
   } catch (error) {
-    console.log(error);
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const editContribution = async (req, res) => {
+const editContribution = async (req, res, next) => {
   try {
     const id = req.params.id;
     const update = req.body;
@@ -105,10 +103,10 @@ const editContribution = async (req, res) => {
       contribution: updatedContribution,
     });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const deleteContribution = async (req, res) => {
+const deleteContribution = async (req, res, next) => {
   try {
     const id = req.params.id;
     const contribution = await ContributionService.deleteContribution(id);
@@ -121,15 +119,15 @@ const deleteContribution = async (req, res) => {
       .status(200)
       .json({ message: "Delete Successfully. ", contribution });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const getAllContribution = async (req, res) => {
+const getAllContribution = async (req, res, next) => {
   try {
     const contributions = await ContributionService.getContribution();
     return res.status(200).json(contributions);
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
 

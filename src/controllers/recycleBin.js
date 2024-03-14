@@ -1,6 +1,6 @@
 const RecycleBinService = require("../services/recycleBin");
 
-const findAll = async (req, res) => {
+const findAll = async (req, res, next) => {
   try {
     let recycleBins;
     const dataType = req.query.dataType;
@@ -12,10 +12,10 @@ const findAll = async (req, res) => {
     }
     return res.status(200).json(recycleBins);
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const permanentDelete = async (req, res) => {
+const permanentDelete = async (req, res, next) => {
   try {
     const id = req.params.id;
     const data = await RecycleBinService.permanentDelete(id);
@@ -24,10 +24,10 @@ const permanentDelete = async (req, res) => {
     }
     return res.status(200).json({ message: "Delete Successfully", data });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
-const restoreData = async (req, res) => {
+const restoreData = async (req, res, next) => {
   try {
     const id = req.params.id;
     const data = await RecycleBinService.retriveData(id);
@@ -36,7 +36,7 @@ const restoreData = async (req, res) => {
     }
     return res.status(200).json({ message: "Restore Successfully", data });
   } catch (error) {
-    return res.status(500).send(error);
+    return next(error);
   }
 };
 const RecycleBin = {

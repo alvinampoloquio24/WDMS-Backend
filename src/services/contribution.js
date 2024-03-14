@@ -1,6 +1,7 @@
 const Contribution = require("../models/contribution");
 const RecycleBinService = require("./recycleBin");
-
+const User = require("../models/user");
+const Transaction = require("../models/transaction");
 async function addContribution(data) {
   try {
     return await Contribution.create(data);
@@ -85,6 +86,48 @@ async function getCountdown(deadline) {
     throw error;
   }
 }
+async function getUserUnpaidContribution() {
+  try {
+    let unpaidUsers = []; // This will store users along with their unpaid contributions
+
+    const users = await User.find();
+    const contributions = await Contribution.find();
+
+    for (const user of users) {
+      let unpaidContributionsForUser = []; // Track unpaid contributions for this user
+
+      for (const contribution of contributions) {
+        const transactions = await Transaction.find({
+          "contribution._id": contribution._id,
+          userId: user._id,
+        });
+
+        // If no transaction is found for this contribution, it means the user hasn't paid
+        if (transactions.length === 0) {
+          unpaidContributionsForUser.push({
+            contributionId: contribution._id,
+            name: `${contribution.firstName} ${contribution.lastName}`,
+            deadline: contribution.deadLine,
+          });
+        }
+      }
+
+      // If this user has any unpaid contributions, add them to the unpaidUsers list
+      if (unpaidContributionsForUser.length > 0) {
+        unpaidUsers.push({
+          userId: user._id,
+          name: `${user.firstName} ${user.lastName}`, // Assuming 'name' is a property of the User model
+          unpaidContributions: unpaidContributionsForUser,
+        });
+      }
+    }
+
+    return unpaidUsers; // Return or process the list of users with their unpaid contributions
+  } catch (error) {
+    console.error("Failed to get users with unpaid contributions", error);
+    throw error; // Rethrow or handle the error as needed
+  }
+}
 
 const ContributionService = {
   getCountdown,
@@ -94,5 +137,6 @@ const ContributionService = {
   editContribution,
   deleteContribution,
   findContributionById,
+  getUserUnpaidContribution,
 };
 module.exports = ContributionService;
