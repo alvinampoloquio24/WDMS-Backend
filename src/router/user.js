@@ -106,6 +106,12 @@ router.get(
   Transaction.getAllTransaction
 );
 router.get(
+  "/getAllTransactionWithStatus",
+  auth,
+  permission("read", "Transaction"),
+  Transaction.getAllTransactionWithStatus
+);
+router.get(
   "/findReference/:number",
   auth,
   permission("read", "Transaction"),

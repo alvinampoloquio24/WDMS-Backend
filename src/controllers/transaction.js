@@ -96,11 +96,20 @@ const deleteTransaction = async (req, res, next) => {
 };
 const getAllTransaction = async (req, res, next) => {
   try {
-    const key = req.query.status;
+    const transactions = await TransactionService.getTransaction();
 
-    const transactions = await TransactionService.getTransaction({
-      status: key,
-    });
+    return res.status(200).json(transactions);
+  } catch (error) {
+    return next(error);
+  }
+};
+const getAllTransactionWithStatus = async (req, res, next) => {
+  try {
+    const status = req.query.status;
+
+    const transactions = await TransactionService.getTransactionWithStatus(
+      status
+    );
 
     return res.status(200).json(transactions);
   } catch (error) {
@@ -169,6 +178,7 @@ const getUnpaidUsers = async (req, res, next) => {
   }
 };
 const Transaction = {
+  getAllTransactionWithStatus,
   getAllTransaction,
   makePayment,
   getSelfTransaction,

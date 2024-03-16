@@ -11,12 +11,17 @@ async function makePayment(data) {
     throw error;
   }
 }
-async function getTransaction(params) {
+async function getTransaction() {
   try {
-    if (params) {
-      return await Transaction.find(params);
-    }
     return await Transaction.find();
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+async function getTransactionWithStatus(status) {
+  try {
+    return await Transaction.find({ status });
   } catch (error) {
     console.log(error);
     throw error;
@@ -64,10 +69,12 @@ async function findTransaction(params) {
 }
 async function findAllTransaction(key) {
   try {
+    console.log(key, "asd");
     if (key) {
       return await Transaction.find(key);
     } else {
-      return await Transaction.find();
+      const t = await Transaction.find();
+      console.log(t);
     }
   } catch (error) {
     console.log(error);
@@ -198,6 +205,7 @@ const TransactionService = {
   isPaid,
   findAllTransaction,
   getReportWithParamas,
+  getTransactionWithStatus,
 };
 
 module.exports = TransactionService;
