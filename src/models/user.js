@@ -20,6 +20,7 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
+  beneficiary: [{ type: String }], // Array of beneficiary names
   gender: {
     type: String,
     enum: ["male", "female"],
