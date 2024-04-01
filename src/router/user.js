@@ -162,6 +162,12 @@ router.get(
   permission("read", "Announcement"),
   Announcement.getAnnouncement
 );
+router.delete(
+  "/deleteAnnouncement/:id",
+  auth,
+  permission("read", "Announcement"),
+  Announcement.deleteAnnouncement
+);
 router.post(
   "/createAnnouncement",
   auth,
