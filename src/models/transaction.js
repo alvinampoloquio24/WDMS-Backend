@@ -58,6 +58,9 @@ const transactionSchema = new Schema({
       },
     },
   },
+  advance: {
+    type: { userId: String, amount: String },
+  },
   paymentMethod: {
     type: String,
   },

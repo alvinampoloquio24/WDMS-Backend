@@ -10,6 +10,9 @@ const {
   changePassword,
   readSelf,
   updateSelf,
+  advancePayment,
+  getAdvcanceHistory,
+  getBalance,
 } = require("../controllers/user");
 
 const auth = require("../middleware/auth");
@@ -166,5 +169,8 @@ router.post(
   Announcement.createAnnouncement
 );
 router.get("/getUnpaidUsers", auth, Transaction.getUnpaidUsers);
+router.post("/advancePayment", auth, advancePayment);
+router.get("/getAdvcanceHistory", auth, getAdvcanceHistory);
+router.get("/getBalance", auth, getBalance);
 
 module.exports = router;

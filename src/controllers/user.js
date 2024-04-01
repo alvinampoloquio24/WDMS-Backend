@@ -1,7 +1,8 @@
 const UserService = require("../services/user");
 const bcrypt = require("bcrypt");
 const jsonwebtoken = require("jsonwebtoken");
-
+const User = require("../models/user");
+const Transaction = require("../models/transaction");
 const createUser = async (req, res, next) => {
   try {
     const isEmailExist = await UserService.findByEmail(req.body.email);
@@ -150,6 +151,68 @@ const updateSelf = async function (req, res, next) {
     return next(error);
   }
 };
+const advancePayment = async function (req, res, next) {
+  try {
+    const id = req.user._id;
+    const amountToAdd = Number(req.body.amount); // Assuming the amount comes from request body and converting it to Number
+
+    // Find user and update balance atomically
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $inc: { balance: amountToAdd } }, // Increment user's balance
+      { new: true, select: "balance" } // Return the updated document with only the balance field
+    );
+
+    const a = await Transaction.create({
+      advance: { userId: id, amount: req.body.amount },
+    });
+
+    // Return success response
+    return res.status(200).json({
+      message: "Advance payment successful",
+      totalBalance: updatedUser.balance,
+    });
+  } catch (error) {
+    // Pass the error to the error handling middleware
+    return next(error);
+  }
+};
+const getAdvcanceHistory = async function (req, res, next) {
+  try {
+    const id = req.user._id;
+
+    // Assuming 'advance' is a boolean indicating whether a transaction is an advance
+    // Adjust the value of 'advance' in the query as needed based on your actual data model
+    const history = await Transaction.find(
+      { "advance.userId": id },
+      { advance: 1, _id: 0 }
+    );
+    // Return success response
+    return res.status(200).json({
+      message: "Advance transaction history retrieved successfully",
+      history: history,
+    });
+  } catch (error) {
+    // Pass the error to the error handling middleware
+    return next(error);
+  }
+};
+const getBalance = async function (req, res, next) {
+  try {
+    const id = req.user._id;
+
+    // Assuming 'advance' is a boolean indicating whether a transaction is an advance
+    // Adjust the value of 'advance' in the query as needed based on your actual data model
+    const balance = await User.findById(id);
+
+    // Return success response
+    return res.status(200).json({ balance: balance.balance });
+  } catch (error) {
+    // Pass the error to the error handling middleware
+    return next(error);
+  }
+};
+
 module.exports = {
   changePassword,
   login,
@@ -159,4 +222,7 @@ module.exports = {
   updateUser,
   readSelf,
   updateSelf,
+  advancePayment,
+  getAdvcanceHistory,
+  getBalance,
 };
