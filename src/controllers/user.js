@@ -181,17 +181,9 @@ const getAdvcanceHistory = async function (req, res, next) {
   try {
     const id = req.user._id;
 
-    // Assuming 'advance' is a boolean indicating whether a transaction is an advance
-    // Adjust the value of 'advance' in the query as needed based on your actual data model
-    const history = await Transaction.find(
-      { "advance.userId": id },
-      { advance: 1, _id: 0 }
-    );
-    // Return success response
-    return res.status(200).json({
-      message: "Advance transaction history retrieved successfully",
-      history: history,
-    });
+    const history = await Transaction.find({ "advance.userId": id });
+
+    return res.status(200).json(history);
   } catch (error) {
     // Pass the error to the error handling middleware
     return next(error);
