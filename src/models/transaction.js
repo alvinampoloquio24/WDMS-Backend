@@ -43,6 +43,9 @@ const transactionSchema = new Schema({
       age: {
         type: String,
       },
+      amount: {
+        type: String,
+      },
     },
   },
   registrationFee: {

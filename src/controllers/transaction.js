@@ -19,16 +19,15 @@ const makePayment = async (req, res, next) => {
       return res.status(400).json({ message: "Your are already paid. " });
     }
     const contribution = await ContributionService.findContributionById(id);
+    console.log(contribution, "aasdsa");
     if (!contribution) {
       return res
         .status(400)
         .json({ message: "There is no contribution in provided Id. " });
     }
-    const contributionName = `${contribution.lastName} ${contribution.firstName}`;
-    const amount = contribution.amount;
+
     data.contribution = contribution;
     data.userId = userId;
-    data.amount = contribution.amount;
     data.status = "Waiting for approval";
 
     const transaction = await TransactionService.makePayment(data);
@@ -97,7 +96,6 @@ const deleteTransaction = async (req, res, next) => {
 const getAllTransaction = async (req, res, next) => {
   try {
     const transactions = await TransactionService.getTransaction();
-
     return res.status(200).json(transactions);
   } catch (error) {
     return next(error);

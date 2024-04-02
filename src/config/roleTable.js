@@ -14,7 +14,7 @@ const roles = {
   },
   cashier: {
     User: ["read", "readSelf", "updateSelf"],
-    Contribution: ["read", "readALL"],
+    Contribution: ["manage"],
     Transaction: ["manage"],
     RecycleBin: ["create"],
     Announcement: ["read"],
