@@ -13,7 +13,10 @@ async function makePayment(data) {
 }
 async function getTransaction() {
   try {
-    return await Transaction.find();
+    const transactionsWithContribution = await Transaction.find({
+      contribution: { $exists: true },
+    });
+    return transactionsWithContribution;
   } catch (error) {
     console.log(error);
     throw error;

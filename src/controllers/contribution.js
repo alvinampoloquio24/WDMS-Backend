@@ -86,6 +86,7 @@ const editContribution = async (req, res, next) => {
   try {
     const id = req.params.id;
     const update = req.body;
+    update.countDown = await ContributionService.getCountdown(update.deadLine);
 
     // Update the contribution
     const updatedContribution = await ContributionService.editContribution(
@@ -103,6 +104,7 @@ const editContribution = async (req, res, next) => {
       contribution: updatedContribution,
     });
   } catch (error) {
+    console.log(error);
     return next(error);
   }
 };
