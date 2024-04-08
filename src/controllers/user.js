@@ -5,6 +5,7 @@ const User = require("../models/user");
 const Transaction = require("../models/transaction");
 const createUser = async (req, res, next) => {
   try {
+    console.log(req.body, "-------------");
     const isEmailExist = await UserService.findByEmail(req.body.email);
     if (isEmailExist) {
       return res.status(400).json({ message: "Email already used. " });

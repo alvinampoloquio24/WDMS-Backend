@@ -15,7 +15,7 @@ async function getTransaction() {
   try {
     const transactionsWithContribution = await Transaction.find({
       contribution: { $exists: true },
-    });
+    }).sort({ date: -1 }); // Sorting by the 'date' field in descending order
     return transactionsWithContribution;
   } catch (error) {
     console.log(error);

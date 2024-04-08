@@ -35,7 +35,7 @@ async function createUser(userData, file) {
 }
 async function getAllUser() {
   try {
-    const users = await User.find();
+    const users = await User.find().sort({ lastName: 1 });
     return users;
   } catch (error) {
     throw error;

@@ -15,7 +15,7 @@ async function getContribution(params) {
     if (params) {
       return await Contribution.find(params);
     } else {
-      return await Contribution.find();
+      return await Contribution.find().sort({ date: -1 });
     }
   } catch (error) {
     console.log(error);

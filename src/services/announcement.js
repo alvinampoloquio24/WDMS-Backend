@@ -2,7 +2,7 @@ const Announcement = require("../models/announcement");
 
 async function get() {
   try {
-    return await Announcement.find();
+    return await Announcement.find().sort({ date: -1 });
   } catch (error) {
     console.log(error);
     throw error;
