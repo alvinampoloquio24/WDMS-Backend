@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const TransactionService = require("./transaction");
 const cloudinary = require("../config/cloudinary");
 const RecycleBinService = require("./recycleBin");
-
+const Beneficiary = require("../models/benefiiciary");
 async function createUser(userData, file) {
   try {
     userData.password = await bcrypt.hash(userData.password, 8);
@@ -36,6 +36,16 @@ async function createUser(userData, file) {
 async function getAllUser() {
   try {
     const users = await User.find().sort({ lastName: 1 });
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
+async function getAllUser2() {
+  try {
+    const users = await User.find()
+      .sort({ lastName: 1 })
+      .select({ _id: 1, lastName: 1, firstName: 1 });
     return users;
   } catch (error) {
     throw error;
@@ -120,5 +130,6 @@ const UserService = {
   login,
   findByEmail,
   findByIdAndUpdate,
+  getAllUser2,
 };
 module.exports = UserService;

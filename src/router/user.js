@@ -1,6 +1,7 @@
 const express = require("express");
 const upload = require("../middleware/upload");
 const RecycleBin = require("../controllers/recycleBin.js");
+const Ben = require("../controllers/Ben.js");
 const {
   createUser,
   getAllUser,
@@ -13,6 +14,7 @@ const {
   advancePayment,
   getAdvcanceHistory,
   getBalance,
+  getAllUser2,
 } = require("../controllers/user");
 
 const auth = require("../middleware/auth");
@@ -30,6 +32,7 @@ router.post("/changePassword", auth, changePassword);
 
 router.post("/createUser", upload.single("image"), createUser);
 router.get("/fetchAllUser", auth, permission("read", "User"), getAllUser);
+router.get("/fetchAllUser2", auth, permission("readAll", "User"), getAllUser2);
 router.delete(
   "/deleteUser/:id",
   auth,
@@ -78,6 +81,7 @@ router.delete(
 );
 
 //TRANSACTION
+
 router.post(
   "/makePayment/:id",
   auth,
@@ -178,5 +182,10 @@ router.get("/getUnpaidUsers", auth, Transaction.getUnpaidUsers);
 router.post("/advancePayment", auth, advancePayment);
 router.get("/getAdvcanceHistory", auth, getAdvcanceHistory);
 router.get("/getBalance", auth, getBalance);
-
+//////
+router.get("/getBeneficiary", auth, Ben.getBeneficiary);
+router.get("/getBeneficiary2", auth, Ben.getBeneficiary2);
+router.post("/addBeneficiary", auth, Ben.addBeneficiary);
+router.post("/editBeneficiary/:id", auth, Ben.editBeneficiary);
+router.delete("/deleteBeneficiary/:id", auth, Ben.deleteBeneficiary);
 module.exports = router;

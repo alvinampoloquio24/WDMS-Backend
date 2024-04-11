@@ -30,6 +30,14 @@ const getAllUser = async (req, res, next) => {
     return next(error);
   }
 };
+const getAllUser2 = async (req, res, next) => {
+  try {
+    const users = await UserService.getAllUser2();
+    return res.status(200).json(users);
+  } catch (error) {
+    return next(error);
+  }
+};
 const deleteUser = async (req, res, next) => {
   try {
     if (!req.params.id) {
@@ -218,4 +226,5 @@ module.exports = {
   advancePayment,
   getAdvcanceHistory,
   getBalance,
+  getAllUser2,
 };

@@ -15,6 +15,9 @@ const userSchema = new Schema({
     enum: ["member", "admin", "cashier"],
     default: "member",
   },
+  dateBorn: {
+    type: Date,
+  },
   email: {
     type: String,
     required: true,

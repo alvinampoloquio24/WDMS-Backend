@@ -2,13 +2,66 @@ const Contribution = require("../models/contribution");
 const RecycleBinService = require("./recycleBin");
 const User = require("../models/user");
 const Transaction = require("../models/transaction");
+const sendEmail = require("../email/email");
 async function addContribution(data) {
   try {
-    return await Contribution.create(data);
+    const user = await User.findById(data.user);
+    data.firstName = user.firstName;
+    data.lastName = user.lastName;
+    data.gender = user.gender;
+    data.age = calculateAge(user.dateBorn, data.died);
+    data.born = user.dateBorn;
+    const name = `${user.firstName} ${user.lastName}`;
+    const users = await User.find();
+
+    function isValidEmail(email) {
+      // Regular expression for email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    for (const user of users) {
+      // Check if any of the required data is null
+      if (
+        name &&
+        data &&
+        data.amount &&
+        data.deadLine &&
+        user &&
+        user.email &&
+        isValidEmail(user.email) // Check if the email is valid
+      ) {
+        // If all required data is present and the email is valid, send the email
+        await sendEmail(name, data.amount, data.deadLine, user.email);
+      } else {
+        // Log or handle the case where data is missing or the email is invalid
+        console.log(
+          "Invalid email or missing data for sending email to user:",
+          user
+        );
+        // You can also choose to skip this user or handle it differently
+      }
+    }
+    const contribution = await Contribution.create(data);
+    return contribution;
   } catch (error) {
     console.log(error);
     throw error;
   }
+}
+function calculateAge(dateBorn, died) {
+  const born = new Date(dateBorn);
+  const death = new Date(died);
+  let age = death.getFullYear() - born.getFullYear();
+  const m = death.getMonth() - born.getMonth();
+
+  // If the current month is before the birth month, or
+  // it's the same month but the current day is before the birth day, decrease the age by 1
+  if (m < 0 || (m === 0 && death.getDate() < born.getDate())) {
+    age--;
+  }
+
+  return age;
 }
 async function getContribution(params) {
   try {

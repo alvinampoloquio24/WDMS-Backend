@@ -117,13 +117,15 @@ async function getReport() {
 
     let totalAmount = 0;
     transactions.forEach((transaction) => {
-      totalAmount += transaction.amount;
+      if (transaction.amount != null && !isNaN(transaction.amount)) {
+        totalAmount += transaction.amount;
+      }
     });
 
     const remainingMembers = await User.countDocuments();
 
     const report = {
-      totalAmount: totalAmount,
+      totalAmount,
       totalNumberMember: remainingMembers,
       transactions: {
         paid,
