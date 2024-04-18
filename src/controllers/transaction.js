@@ -1,5 +1,6 @@
 const TransactionService = require("../services/transaction");
 const ContributionService = require("../services/contribution");
+const Transactions = require("../models/transaction");
 const cloudinary = require("../config/cloudinary");
 const sendEmail = require("../email/email");
 
@@ -48,8 +49,8 @@ const makePayment = async (req, res, next) => {
 };
 const getSelfTransaction = async (req, res, next) => {
   try {
-    const params = { userId: req.user._id };
-    const transaction = await TransactionService.getTransaction(params);
+    const userId = req.user._id;
+    const transaction = await Transactions.find({ userId });
     return res.status(200).json(transaction);
   } catch (error) {
     return next(error);

@@ -3,15 +3,27 @@ const RecycleBinService = require("./recycleBin");
 const User = require("../models/user");
 const Transaction = require("../models/transaction");
 const sendEmail = require("../email/email");
+const Beneficiary = require("../models/benefiiciary");
 async function addContribution(data) {
   try {
     const user = await User.findById(data.user);
-    data.firstName = user.firstName;
-    data.lastName = user.lastName;
-    data.gender = user.gender;
-    data.age = calculateAge(user.dateBorn, data.died);
-    data.born = user.dateBorn;
-    const name = `${user.firstName} ${user.lastName}`;
+    const ben = await Beneficiary.findById(data.user);
+    let name;
+    if (user) {
+      data.firstName = user.firstName;
+      data.lastName = user.lastName;
+      data.gender = user.gender;
+      data.age = calculateAge(user.dateBorn, data.died);
+      data.born = user.dateBorn;
+      name = `${user.firstName} ${user.lastName}`;
+    } else if (ben) {
+      data.firstName = ben.firstName;
+      data.lastName = ben.lastName;
+      data.gender = ben.gender;
+      data.age = calculateAge(ben.born, data.died);
+      data.born = ben.born;
+      name = `${ben.firstName} ${ben.lastName}`;
+    }
     const users = await User.find();
 
     function isValidEmail(email) {

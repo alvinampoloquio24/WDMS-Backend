@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jsonwebtoken = require("jsonwebtoken");
 const User = require("../models/user");
 const Transaction = require("../models/transaction");
+const Beneficiary = require("../models/benefiiciary");
 const createUser = async (req, res, next) => {
   try {
     console.log(req.body, "-------------");
@@ -32,7 +33,13 @@ const getAllUser = async (req, res, next) => {
 };
 const getAllUser2 = async (req, res, next) => {
   try {
-    const users = await UserService.getAllUser2();
+    const [a, beneficiaries] = await Promise.all([
+      UserService.getAllUser2(),
+      Beneficiary.find({ role: "beneficiary" })
+        .sort({ lastName: 1 })
+        .select({ _id: 1, lastName: 1, firstName: 1 }),
+    ]);
+    const users = a.concat(beneficiaries);
     return res.status(200).json(users);
   } catch (error) {
     return next(error);

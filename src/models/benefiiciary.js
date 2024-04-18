@@ -12,6 +12,12 @@ const benefitciarySchema = new mongoose.Schema({
   lastName: {
     type: String,
   },
+  gender: {
+    type: String,
+  },
+  born: {
+    type: Date,
+  },
   role: {
     type: String,
     default: "beneficiary",
