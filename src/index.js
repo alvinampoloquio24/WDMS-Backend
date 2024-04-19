@@ -16,6 +16,7 @@ app.use(express.json());
 connectToDatabase();
 
 cron.schedule("0 0 * * *", function () {
+  //if you want to test this replace "0 0 * * *" to "* * * * *" it should run every minutes
   // Call your Notification function here to send emails with deadlines for 1 day
   Notification();
 }); //execute every midnight
