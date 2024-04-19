@@ -16,10 +16,9 @@ app.use(express.json());
 connectToDatabase();
 
 cron.schedule("0 0 * * *", function () {
-  const today = new Date(); // Get the current date
-  console.log(today);
+  // Call your Notification function here to send emails with deadlines for 1 day
   Notification();
-});
+}); //execute every midnight
 
 // Routes
 app.post("/", (req, res) => {
