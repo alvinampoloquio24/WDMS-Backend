@@ -35,7 +35,7 @@ const contributionSchema = new mongoose.Schema({
       relation: String,
       date: {
         type: Date,
-        default: Date.now(),
+        default: Date.now,
       },
     },
   },
@@ -44,8 +44,10 @@ const contributionSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
+    index: true, // Add index to enable sorting
   },
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Contribution = mongoose.model("Contribution", contributionSchema);

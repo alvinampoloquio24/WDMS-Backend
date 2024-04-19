@@ -136,7 +136,7 @@ const getAllContribution = async (req, res, next) => {
 };
 const getAllContribution2 = async (req, res, next) => {
   try {
-    const contributions = await Contributions.find();
+    const contributions = await Contributions.find().sort({ createdAt: -1 });
     for (const contribution of contributions) {
       let total = 0;
       const trans = await Transactions.find({
