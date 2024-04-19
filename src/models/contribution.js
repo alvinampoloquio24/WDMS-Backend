@@ -29,6 +29,19 @@ const contributionSchema = new mongoose.Schema({
   countDown: {
     type: Number,
   },
+  release: {
+    type: {
+      claim: String,
+      relation: String,
+      date: {
+        type: Date,
+        default: Date.now(),
+      },
+    },
+  },
+  total: {
+    type: Number,
+  },
   date: {
     type: Date,
     default: Date.now(),

@@ -40,6 +40,7 @@ const makePayment = async (req, res, next) => {
     //   transaction.date,
     //   data.email
     // );
+    console.log(transaction);
     return res
       .status(201)
       .json({ message: "Successfully Paid. ", transaction });

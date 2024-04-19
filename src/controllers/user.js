@@ -25,7 +25,21 @@ const createUser = async (req, res, next) => {
 };
 const getAllUser = async (req, res, next) => {
   try {
-    const users = await UserService.getAllUser();
+    // Extract query parameters
+    const { name } = req.query;
+
+    // Initialize the filter regex if provided
+    let filter = {};
+    if (name) {
+      filter.$or = [
+        { firstName: new RegExp(name, "i") },
+        { lastName: new RegExp(name, "i") },
+      ];
+    }
+
+    // Fetch users based on filter
+    const users = await User.find(filter);
+
     return res.status(200).json(users);
   } catch (error) {
     return next(error);

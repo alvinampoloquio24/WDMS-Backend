@@ -1,6 +1,8 @@
 const ContributionService = require("../services/contribution");
 const TransactionService = require("../services/transaction");
 const UserService = require("../services/user");
+const Contributions = require("../models/contribution");
+const Transactions = require("../models/transaction");
 
 const addContribution = async (req, res, next) => {
   try {
@@ -132,7 +134,39 @@ const getAllContribution = async (req, res, next) => {
     return next(error);
   }
 };
+const getAllContribution2 = async (req, res, next) => {
+  try {
+    const contributions = await Contributions.find();
+    for (const contribution of contributions) {
+      let total = 0;
+      const trans = await Transactions.find({
+        "contribution._id": contribution._id,
+      });
 
+      for (const transaction of trans) {
+        total += transaction.amount;
+      }
+
+      contribution.total = total;
+      console.log(contribution);
+    }
+    return res.status(200).json(contributions);
+  } catch (error) {
+    return next(error);
+  }
+};
+const release = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const contribution = await Contributions.findByIdAndUpdate(id, {
+      release: req.body,
+    });
+    return res.status(200).json(contribution);
+  } catch (error) {
+    return next(error);
+  }
+};
 const Contribution = {
   getContributionById,
   addContribution,
@@ -140,5 +174,7 @@ const Contribution = {
   editContribution,
   deleteContribution,
   getAllContribution,
+  getAllContribution2,
+  release,
 };
 module.exports = Contribution;

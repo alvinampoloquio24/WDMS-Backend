@@ -49,6 +49,12 @@ router.get(
   Contribution.getContribution
 );
 router.get(
+  "/getContribution2",
+  auth,
+  permission("read", "Contribution"),
+  Contribution.getAllContribution2
+);
+router.get(
   "/getContributionById/:id",
   auth,
   permission("read", "Contribution"),
@@ -60,6 +66,12 @@ router.get(
   auth,
   permission("readAll", "Contribution"),
   Contribution.getAllContribution
+);
+router.post(
+  "/release/:id",
+  auth,
+  permission("readAll", "Contribution"),
+  Contribution.release
 );
 router.post(
   "/addContribution",
